@@ -1,3 +1,6 @@
+from .models import Item
+
+
 class TestHome:
     def test_uses_home_template(self, client):
         response = client.get("/")
@@ -5,5 +8,10 @@ class TestHome:
 
     def test_can_save_POST_request(self, client):
         response = client.post("/", data={"item_text": "A new list item"})
+
+        items = Item.objects.all()
+        assert items.count() == 1
+        assert items.first.text == "A new list item"
+
         assert "lists/home.html" in (t.name for t in response.templates)
         assert b"A new list item" in response.content
