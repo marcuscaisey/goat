@@ -36,16 +36,25 @@ def test_can_start_a_list_and_retrieve_it_later(browser: webdriver.Remote, live_
 
     table = browser.find_element_by_id("to-do_items")
     rows = table.find_elements_by_tag_name("tr")
-    assert any(row.text == "1: Buy peacock feathers" for row in rows)
+    assert "1: Buy peacock feathers" in [row.text for row in rows]
 
     # There is a still a text box inviting her to add another item. She enters "Use peacock feathers to make a fly"
     # (Edith is very methodical).
-    assert 0, "not finished"
+    input_ = browser.find_element_by_id("new_item_input")
+    input_.send_keys("Use peacock feathers to make a fly")
 
     # The page updates again, and now shows both items on her list.
+    input_.send_keys(Keys.ENTER)
+    time.sleep(1)
+
+    table = browser.find_element_by_id("to-do_items")
+    rows = table.find_elements_by_tag_name("tr")
+    assert "1: Buy peacock feathers" in [row.text for row in rows]
+    assert "2: Use peacock feathers to make a fly" in [row.text for row in rows]
 
     # Edith wonders whether the site will remember her list. Then she sees that the site has generated a unique URL for
     # her - there is some explanatory text to that affect.
+    assert 0, "finish this test"
 
     # She visits that URL - her to-do list is still there.
 
