@@ -13,7 +13,22 @@ def browser():
     browser.quit()
 
 
-def test_can_start_a_list_and_retrieve_it_later(browser: webdriver.Remote, live_server):
+@pytest.fixture
+def assert_row_in_todo_table(browser):
+    """
+    A function which checks if a row with the given text is in the to-do list
+    table.
+    """
+
+    def assert_row_in_todo_table(text):
+        table = browser.find_element_by_id("to-do_items")
+        rows = table.find_elements_by_tag_name("tr")
+        assert text in [row.text for row in rows]
+
+    return assert_row_in_todo_table
+
+
+def test_can_start_a_list_and_retrieve_it_later(browser, live_server, assert_row_in_todo_table):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
     browser.get(live_server.url)
 
@@ -34,9 +49,7 @@ def test_can_start_a_list_and_retrieve_it_later(browser: webdriver.Remote, live_
     input_.send_keys(Keys.ENTER)
     time.sleep(1)
 
-    table = browser.find_element_by_id("to-do_items")
-    rows = table.find_elements_by_tag_name("tr")
-    assert "1: Buy peacock feathers" in [row.text for row in rows]
+    assert_row_in_todo_table("1: Buy peacock feathers")
 
     # There is a still a text box inviting her to add another item. She enters "Use peacock feathers to make a fly"
     # (Edith is very methodical).
@@ -47,10 +60,8 @@ def test_can_start_a_list_and_retrieve_it_later(browser: webdriver.Remote, live_
     input_.send_keys(Keys.ENTER)
     time.sleep(1)
 
-    table = browser.find_element_by_id("to-do_items")
-    rows = table.find_elements_by_tag_name("tr")
-    assert "1: Buy peacock feathers" in [row.text for row in rows]
-    assert "2: Use peacock feathers to make a fly" in [row.text for row in rows]
+    assert_row_in_todo_table("1: Buy peacock feathers")
+    assert_row_in_todo_table("2: Use peacock feathers to make a fly")
 
     # Edith wonders whether the site will remember her list. Then she sees that the site has generated a unique URL for
     # her - there is some explanatory text to that affect.
