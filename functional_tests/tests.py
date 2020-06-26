@@ -9,38 +9,43 @@ MAX_WAIT = 10
 
 
 @pytest.fixture(scope="session")
-def browser():
-    """A firefox browser to use during tests."""
-    browser = webdriver.Firefox()
-    yield browser
-    browser.quit()
+def browser_factory():
+    """A factory which returns new firefox browsers to use during tests."""
+    browsers = []
+
+    def browser_factory():
+        browser = webdriver.Firefox()
+        browsers.append(browser)
+        return browser
+
+    yield browser_factory
+
+    for browser in browsers:
+        browser.quit()
 
 
-@pytest.fixture
-def wait_for_row_in_todo_table(browser):
+def wait_for_row_in_todo_table(text, browser):
     """
     A function which checks if a row with the given text is in the to-do list
     table.
     """
-
-    def wait_for_row_in_todo_table(text):
-        start = time.time()
-        while True:
-            try:
-                table = browser.find_element_by_id("to-do_items")
-                rows = table.find_elements_by_tag_name("tr")
-                assert text in [row.text for row in rows]
-                return
-            except (AssertionError, selenium_exceptions.WebDriverException):
-                if time.time() - start > MAX_WAIT:
-                    raise
-                time.sleep(0.5)
-
-    return wait_for_row_in_todo_table
+    start = time.time()
+    while True:
+        try:
+            table = browser.find_element_by_id("to-do_items")
+            rows = table.find_elements_by_tag_name("tr")
+            assert text in [row.text for row in rows]
+            return
+        except (AssertionError, selenium_exceptions.WebDriverException):
+            if time.time() - start > MAX_WAIT:
+                raise
+            time.sleep(0.5)
 
 
-def test_can_start_a_list_and_retrieve_it_later(browser, live_server, wait_for_row_in_todo_table):
+def test_can_start_a_list_for_one_user(browser_factory, live_server):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
+    browser = browser_factory()
+
     browser.get(live_server.url)
 
     # She notices the page title and header mention to-do lists.
@@ -59,7 +64,7 @@ def test_can_start_a_list_and_retrieve_it_later(browser, live_server, wait_for_r
     # list.
     input_.send_keys(Keys.ENTER)
 
-    wait_for_row_in_todo_table("1: Buy peacock feathers")
+    wait_for_row_in_todo_table("1: Buy peacock feathers", browser)
 
     # There is a still a text box inviting her to add another item. She enters "Use peacock feathers to make a fly"
     # (Edith is very methodical).
@@ -70,8 +75,8 @@ def test_can_start_a_list_and_retrieve_it_later(browser, live_server, wait_for_r
     input_.send_keys(Keys.ENTER)
     time.sleep(1)
 
-    wait_for_row_in_todo_table("1: Buy peacock feathers")
-    wait_for_row_in_todo_table("2: Use peacock feathers to make a fly")
+    wait_for_row_in_todo_table("1: Buy peacock feathers", browser)
+    wait_for_row_in_todo_table("2: Use peacock feathers to make a fly", browser)
 
     # Edith wonders whether the site will remember her list. Then she sees that the site has generated a unique URL for
     # her - there is some explanatory text to that affect.
