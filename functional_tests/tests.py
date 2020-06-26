@@ -1,3 +1,4 @@
+import re
 import time
 
 import pytest
@@ -78,10 +79,48 @@ def test_can_start_a_list_for_one_user(browser_factory, live_server):
     wait_for_row_in_todo_table("1: Buy peacock feathers", browser)
     wait_for_row_in_todo_table("2: Use peacock feathers to make a fly", browser)
 
-    # Edith wonders whether the site will remember her list. Then she sees that the site has generated a unique URL for
-    # her - there is some explanatory text to that affect.
-    assert 0, "finish this test"
-
-    # She visits that URL - her to-do list is still there.
-
     # Satisfied, she goes back to sleep.
+    browser.quit()
+
+
+def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_server):
+    lists_url_pattern = r"/lists/.+"
+
+    # Edith start a new to-do list
+    edith_browser = browser_factory()
+
+    edith_browser.get(live_server.url)
+    input_ = edith_browser.find_element_by_id("new_item_input")
+    input_.send_keys("Buy peacock feathers")
+    input_.send_keys(Keys.ENTER)
+    wait_for_row_in_todo_table("1: Buy peacock feathers", edith_browser)
+
+    # She notices that her list has a new URL
+    edith_list_url = edith_browser.current_url
+    assert re.search(lists_url_pattern, edith_list_url)
+
+    # Edith is done with her to-do list for now
+
+    # Now a new user, Francis, comes along to the site
+    francis_browser = browser_factory()
+
+    # Francis visits the home page. There's no sign of Edith's list
+    francis_browser.get(live_server.url)
+    page_text = francis_browser.find_element_by_tag_name("body").text
+    assert "Buy peacock feathers" not in page_text
+
+    # Francis starts a new list by entering a new item. He is less interesting
+    # than Edith...
+    input_ = francis_browser.find_element_by_id("new_item_input")
+    input_.send_keys("Buy milk")
+    input_.send_keys(Keys.ENTER)
+    wait_for_row_in_todo_table("1: Buy milk", francis_browser)
+
+    # Francis gets his own unique URL
+    francis_list_url = francis_browser.current_url
+    assert re.search(lists_url_pattern, francis_list_url)
+    assert francis_list_url != edith_list_url
+
+    # Again, there is no trace of Edith's list
+    page_text = francis_browser.find_element_by_tag_name("body").text
+    assert "Buy peacock feathers" not in page_text
