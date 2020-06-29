@@ -74,7 +74,6 @@ def test_can_start_a_list_for_one_user(browser_factory, live_server):
 
     # The page updates again, and now shows both items on her list.
     input_.send_keys(Keys.ENTER)
-    time.sleep(1)
 
     wait_for_row_in_todo_table("1: Buy peacock feathers", browser)
     wait_for_row_in_todo_table("2: Use peacock feathers to make a fly", browser)
