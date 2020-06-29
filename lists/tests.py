@@ -16,20 +16,33 @@ def assert_redirects(response, url):
 
 class TestListView:
     @pytest.mark.django_db
-    def test_displays_all_items(self, client):
+    def test_uses_list_template(self, client):
         list_ = List.objects.create()
-        Item.objects.create(text="item 1", list=list_)
-        Item.objects.create(text="item 2", list=list_)
+        response = client.get(f"/lists/{list_.pk}/")
+        assert_template_used(response, "lists/list.html")
 
-        response = client.get("/lists/the-only-list-in-the-world/")
+    @pytest.mark.django_db
+    def test_displays_only_items_for_that_list(self, client):
+        correct_list = List.objects.create()
+        Item.objects.create(text="item 1", list=correct_list)
+        Item.objects.create(text="item 2", list=correct_list)
+
+        other_list = List.objects.create()
+        Item.objects.create(text="other item 1", list=other_list)
+        Item.objects.create(text="other item 2", list=other_list)
+
+        response = client.get(f"/lists/{correct_list.pk}/")
 
         assert b"item 1" in response.content
         assert b"item 2" in response.content
+        assert b"other item 1" not in response.content
+        assert b"other item 2" not in response.content
 
     @pytest.mark.django_db
-    def test_uses_list_template(self, client):
-        response = client.get("/lists/the-only-list-in-the-world/")
-        assert_template_used(response, "lists/list.html")
+    def test_passes_list_to_template(self, client):
+        list_ = List.objects.create()
+        response = client.get(f"/lists/{list_.pk}/")
+        assert response.context["list"] == list_
 
 
 class TestHome:
@@ -56,7 +69,31 @@ class TestNewListView:
     @pytest.mark.django_db
     def test_redirects_after_POST(self, client):
         response = client.post("/lists/new/", data={"item_text": "A new list item"})
-        assert_redirects(response, "/lists/the-only-list-in-the-world/")
+        list_ = List.objects.first()
+        assert_redirects(response, f"/lists/{list_.pk}/")
+
+
+class TestNewItemView:
+    @pytest.mark.django_db
+    def test_can_a_POST_request_to_an_existing_list(self, client):
+        list_ = List.objects.create()
+
+        client.post(f"/lists/{list_.pk}/add_item/", {"item_text": "A new list item"})
+
+        saved_items = Item.objects
+        assert saved_items.count() == 1
+
+        saved_item = saved_items.first()
+        assert saved_item.text == "A new list item"
+        assert saved_item.list == list_
+
+    @pytest.mark.django_db
+    def test_redirects_to_list_view(self, client):
+        list_ = List.objects.create()
+
+        response = client.post(f"/lists/{list_.pk}/add_item/", {"item_text": "A new list item"})
+
+        assert_redirects(response, f"/lists/{list_.pk}/")
 
 
 class ListAndItemModelsTest:
