@@ -1,3 +1,4 @@
+import os
 import re
 import time
 
@@ -25,6 +26,11 @@ def browser_factory():
         browser.quit()
 
 
+@pytest.fixture(scope="session")
+def live_server_url(live_server):
+    return os.getenv("STAGING_SERVER", live_server.url)
+
+
 def wait_for_row_in_todo_table(text, browser):
     """
     A function which checks if a row with the given text is in the to-do list
@@ -43,11 +49,11 @@ def wait_for_row_in_todo_table(text, browser):
             time.sleep(0.5)
 
 
-def test_can_start_a_list_for_one_user(browser_factory, live_server):
+def test_can_start_a_list_for_one_user(browser_factory, live_server_url):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
     browser = browser_factory()
 
-    browser.get(live_server.url)
+    browser.get(live_server_url)
 
     # She notices the page title and header mention to-do lists.
     assert "To-Do" in browser.title
@@ -82,13 +88,13 @@ def test_can_start_a_list_for_one_user(browser_factory, live_server):
     browser.quit()
 
 
-def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_server):
+def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_server_url):
     lists_url_pattern = r"/lists/.+"
 
     # Edith start a new to-do list
     edith_browser = browser_factory()
 
-    edith_browser.get(live_server.url)
+    edith_browser.get(live_server_url)
     input_ = edith_browser.find_element_by_id("new_item_input")
     input_.send_keys("Buy peacock feathers")
     input_.send_keys(Keys.ENTER)
@@ -99,12 +105,13 @@ def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_
     assert re.search(lists_url_pattern, edith_list_url)
 
     # Edith is done with her to-do list for now
+    edith_browser.quit()
 
     # Now a new user, Francis, comes along to the site
     francis_browser = browser_factory()
 
     # Francis visits the home page. There's no sign of Edith's list
-    francis_browser.get(live_server.url)
+    francis_browser.get(live_server_url)
     page_text = francis_browser.find_element_by_tag_name("body").text
     assert "Buy peacock feathers" not in page_text
 
@@ -124,12 +131,17 @@ def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_
     page_text = francis_browser.find_element_by_tag_name("body").text
     assert "Buy peacock feathers" not in page_text
 
+    # Francis is done for now as well
+    francis_browser.quit()
 
-def test_layout(browser_factory, live_server):
+
+def test_layout(browser_factory, live_server_url):
     browser = browser_factory()
     browser.set_window_size(1024, 768)
 
-    browser.get(live_server.url)
+    browser.get(live_server_url)
 
     input_ = browser.find_element_by_id("new_item_input")
     assert input_.location["x"] + input_.size["width"] / 2 == pytest.approx(512, abs=10)
+
+    browser.quit()
