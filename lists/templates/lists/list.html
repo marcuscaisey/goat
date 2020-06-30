@@ -4,15 +4,16 @@
   Your To-Do List
 {% endblock %}
 
-{% block content %}
-  <form method="post" action="{% url "lists:add-item" pk=list.pk %}">
-    {% csrf_token %}
-    <input name="item_text" id="new_item_input" placeholder="Enter a to-do item">
-  </form>
+{% block form-action %}
+  {% url "lists:add-item" pk=list.pk %}
+{% endblock %}
 
-  <table id="to-do_items">
+{% block content %}
+  <table class="table is-striped is-fullwidth" id="to-do_items">
     {% for item in list.item_set.all %}
-      <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
+      <tr>
+        <td><strong>{{ forloop.counter }}:</strong> {{ item.text }}</td>
+      </tr>
     {% endfor %}
   </table>
 {% endblock %}

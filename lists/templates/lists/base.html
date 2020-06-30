@@ -1,17 +1,39 @@
+{% load static %}
+
 <!DOCTYPE html>
 
 <html lang="en">
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>To-Do lists</title>
+  <link rel="stylesheet" href="{% static "lists/bulma.min.css" %}">
+  <title>To-Do Lists</title>
 </head>
 
 <body>
 
-<h1>{% block header %}{% endblock %}</h1>
+<div class="container mt-2">
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <h1 class="title is-1 has-text-centered is-spaced">{% block header %}{% endblock %}</h1>
+    </div>
+  </div>
 
-{% block content %}{% endblock %}
+  <div class="columns is-centered">
+    <div class="column is-two-thirds">
+      <form class="mb-2" method="post" action="{% block form-action %}{% endblock %}">
+        {% csrf_token %}
+        <div class="field">
+          <div class="control">
+            <input class="input" name="item_text" id="new_item_input" placeholder="Enter a to-do item">
+          </div>
+        </div>
+      </form>
+
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
 
 </body>
 

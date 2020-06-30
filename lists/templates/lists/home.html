@@ -4,9 +4,7 @@
   Start a To-Do List
 {% endblock %}
 
-{% block content %}
-  <form method="post" action="{% url "lists:new-list" %}">
-    {% csrf_token %}
-    <input name="item_text" id="new_item_input" placeholder="Enter a to-do item">
-  </form>
+{% block form-action %}
+  {% url "lists:new-list" %}
 {% endblock %}
+
