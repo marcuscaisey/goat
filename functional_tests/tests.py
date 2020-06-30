@@ -123,3 +123,13 @@ def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_
     # Again, there is no trace of Edith's list
     page_text = francis_browser.find_element_by_tag_name("body").text
     assert "Buy peacock feathers" not in page_text
+
+
+def test_layout(browser_factory, live_server):
+    browser = browser_factory()
+    browser.set_window_size(1024, 768)
+
+    browser.get(live_server.url)
+
+    input_ = browser.find_element_by_id("new_item_input")
+    assert input_.location["x"] + input_.size["width"] / 2 == pytest.approx(512, abs=10)
