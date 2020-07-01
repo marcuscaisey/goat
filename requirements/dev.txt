@@ -11,6 +11,7 @@ black==19.10b0            # via -r dev.in
 click==7.1.2              # via black, pip-tools
 django-environ==0.4.5     # via -r main.txt
 django==3.0.7             # via -r main.txt
+gunicorn==20.0.4          # via -r main.txt
 more-itertools==8.4.0     # via pytest
 packaging==20.4           # via pytest
 pathspec==0.8.0           # via black
@@ -32,3 +33,4 @@ wcwidth==0.2.5            # via pytest
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
+# setuptools

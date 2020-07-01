@@ -7,5 +7,9 @@
 asgiref==3.2.10           # via django
 django-environ==0.4.5     # via -r main.in
 django==3.0.7             # via -r main.in
+gunicorn==20.0.4          # via -r main.in
 pytz==2020.1              # via django
 sqlparse==0.3.1           # via django
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
