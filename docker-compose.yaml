@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  superlists:
+    container_name: superlists
+    build: .
+    volumes:
+    - "/srv/sites/$DOMAIN:/srv/superlists"
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.superlists.entryPoints=https"
+    - "traefik.http.routers.superlists.rule=Host(`$DOMAIN`, `www.$DOMAIN`)"
+    - "traefik.http.routers.superlists.middlewares=redirect-www"
+    - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\."
+    - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://"
+    - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.19.0
+    volumes:
+    - "./nginx.conf:/etc/nginx/conf.d/superlists.conf:ro"
+    - "/srv/sites/$DOMAIN/static:/srv/superlists/static:ro"
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.nginx.entryPoints=https"
+    - "traefik.http.routers.nginx.rule=Host(`$DOMAIN`) && PathPrefix(`/static/`)"
+    - "traefik.http.routers.nginx.middlewares=strip-static"
+    - "traefik.http.middlewares.strip-static.stripPrefix.prefixes=/static"
