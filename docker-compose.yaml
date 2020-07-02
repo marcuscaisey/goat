@@ -26,5 +26,4 @@ services:
     - "traefik.enable=true"
     - "traefik.http.routers.nginx.entryPoints=https"
     - "traefik.http.routers.nginx.rule=Host(`$DOMAIN`) && PathPrefix(`/static/`)"
-    - "traefik.http.routers.nginx.middlewares=strip-static"
-    - "traefik.http.middlewares.strip-static.stripPrefix.prefixes=/static"
+    - "traefik.http.services.nginx.loadbalancer.server.port=8000"
