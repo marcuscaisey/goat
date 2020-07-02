@@ -10,11 +10,7 @@ services:
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.superlists.entryPoints=https"
-    - "traefik.http.routers.superlists.rule=Host(`$DOMAIN`, `www.$DOMAIN`)"
-    - "traefik.http.routers.superlists.middlewares=redirect-www"
-    - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\."
-    - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://"
-    - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
+    - "traefik.http.routers.superlists.rule=Host(`$DOMAIN`)"
 
   nginx:
     container_name: nginx
