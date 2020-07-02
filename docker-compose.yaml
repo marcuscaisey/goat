@@ -23,3 +23,8 @@ services:
     - "traefik.http.routers.nginx.entryPoints=https"
     - "traefik.http.routers.nginx.rule=Host(`$DOMAIN`) && PathPrefix(`/static/`)"
     - "traefik.http.services.nginx.loadbalancer.server.port=8000"
+
+networks:
+  default:
+    external: true
+    name: traefik
