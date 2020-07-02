@@ -6,6 +6,7 @@ services:
     build: .
     volumes:
     - "/srv/sites/$DOMAIN/static:/src/superlists/static"
+    - "/srv/sites/$DOMAIN/db.sqlite3:/src/superlists/db.sqlite3"
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.superlists.entryPoints=https"

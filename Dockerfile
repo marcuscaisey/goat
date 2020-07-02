@@ -1,7 +1,5 @@
 FROM python:3.8.2-slim-buster
 
-ENV DATABASE_URL sqlite:////srv/superlists/db.sqlite3
-
 EXPOSE 8000
 
 RUN mkdir -p /srv/superlists
