@@ -72,7 +72,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATIC_ROOT = env("STATIC_ROOT")
+STATIC_ROOT = env("STATIC_ROOT", default=root("static"))
 
 CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=True)
 

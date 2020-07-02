@@ -1,7 +1,6 @@
 FROM python:3.8.2-slim-buster
 
 ENV DATABASE_URL sqlite:////srv/superlists/db.sqlite3
-ENV STATIC_ROOT /srv/superlists/static
 
 EXPOSE 8000
 
