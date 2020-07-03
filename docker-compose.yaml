@@ -5,8 +5,7 @@ services:
     container_name: superlists
     build: .
     volumes:
-    - "/srv/sites/$DOMAIN/static:/src/superlists/static"
-    - "/srv/sites/$DOMAIN/db.sqlite3:/src/superlists/db.sqlite3"
+    - "/srv/sites/$DOMAIN:/src/superlists/data"
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.superlists.entryPoints=https"

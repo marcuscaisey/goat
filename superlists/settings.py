@@ -2,6 +2,7 @@ import environ
 
 env = environ.Env()
 root = environ.Path(__file__) - 2
+data = root("data")
 
 environ.Env.read_env(root(".env"))
 
@@ -51,7 +52,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "superlists.wsgi.application"
 
-DATABASES = {"default": env.db_url("DATABASE_URL", default=f"sqlite:///{root('db.sqlite3')}")}
+DATABASES = {"default": env.db_url("DATABASE_URL", default=f"sqlite:///{data('db.sqlite3')}")}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -72,7 +73,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATIC_ROOT = env("STATIC_ROOT", default=root("static"))
+STATIC_ROOT = env("STATIC_ROOT", default=data("static"))
 
 CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=True)
 
