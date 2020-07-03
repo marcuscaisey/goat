@@ -4,6 +4,8 @@ EXPOSE 8000
 
 WORKDIR /usr/src/superlists
 
+RUN mkdir data
+
 COPY requirements/main.txt requirements/main.txt
 
 RUN pip install -r requirements/main.txt
