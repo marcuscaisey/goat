@@ -2,19 +2,26 @@ import pytest
 
 
 def pytest_addoption(parser):
-    parser.addoption("--functional", action="store_true", help="run functional tests")
+    parser.addoption("--functional", action="store_true", help="run functional tests as well")
+    parser.addoption("--functional-only", action="store_true", help="run only the functional tests")
 
 
 def pytest_collection_modifyitems(config, items):
     """
-    Skip over the functional tests if the --functional option is not given.
+    Run the functional tests with the --functional or --functional-only options.
     """
-    if config.getoption("--functional"):
-        return
+    functional = config.getoption("--functional")
+    functional_only = config.getoption("--functional-only")
+
+    skip_functional_tests = not functional and not functional_only
+    skip_unit_tests = functional_only
+
+    functional_skip_marker = pytest.mark.skip(reason="need --functional or --functional-only option to run")
+    unit_skip_marker = pytest.mark.skip(reason="--functional-only option set")
 
     for item in items:
         filename, *_ = item.nodeid.split("::")
-        if "functional" in filename:
-            print(filename)
-            skip_functional = pytest.mark.skip(reason="need --functional option to run")
-            item.add_marker(skip_functional)
+        if "functional" in filename and skip_functional_tests:
+            item.add_marker(functional_skip_marker)
+        elif "functional" not in filename and skip_unit_tests:
+            item.add_marker(unit_skip_marker)
