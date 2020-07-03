@@ -2,7 +2,7 @@ import environ
 
 env = environ.Env()
 root = environ.Path(__file__) - 2
-data = root("data")
+data = root.path("data")
 
 environ.Env.read_env(root(".env"))
 
