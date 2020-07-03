@@ -1,11 +1,33 @@
 version: "3.7"
 
 services:
+  traefik:
+    container_name: traefik
+    image: traefik:v2.2.1
+    command:
+    - "--accesslog=true"
+    - "--providers.docker=true"
+    - "--providers.docker.exposedbydefault=false"
+    - "--entrypoints.https.address=:443"
+    - "--entrypoints.https.http.tls.certresolver=tls-resolver"
+    - "--entrypoints.http.address=:80"
+    - "--entrypoints.http.http.redirections.entryPoint.to=https"
+    - "--certificatesresolvers.tls-resolver.acme.tlschallenge=true"
+    #    - "--certificatesresolvers.tls-resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+    - "--certificatesresolvers.tls-resolver.acme.email=$EMAIL"
+    - "--certificatesresolvers.tls-resolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+    - "80:80"
+    - "443:443"
+    volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    - "/srv/letsencrypt:/letsencrypt"
+
   superlists:
     container_name: superlists
     build: .
     volumes:
-    - "/srv/sites/$DOMAIN:/usr/src/superlists/data"
+    - "/srv/superlists:/usr/src/superlists/data"
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.superlists.entryPoints=https"
@@ -21,15 +43,10 @@ services:
     image: nginx:1.19.0
     volumes:
     - "./nginx.conf:/etc/nginx/conf.d/superlists.conf:ro"
-    - "/srv/sites/$DOMAIN/static:/srv/superlists/static:ro"
+    - "/srv/superlists/static:/srv/superlists/static:ro"
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.nginx.entryPoints=https"
     - "traefik.http.routers.nginx.rule=Host(`$DOMAIN`) && PathPrefix(`/static/`)"
     - "traefik.http.routers.nginx.priority=2"
     - "traefik.http.services.nginx.loadbalancer.server.port=8000"
-
-networks:
-  default:
-    external: true
-    name: traefik
