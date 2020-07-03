@@ -52,7 +52,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "superlists.wsgi.application"
 
-DATABASES = {"default": env.db_url("DATABASE_URL", default=f"sqlite:///{data('db.sqlite3')}")}
+default_db_root = root if DEBUG else data
+DATABASES = {"default": env.db_url("DATABASE_URL", default=f"sqlite:///{default_db_root('db.sqlite3')}")}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
