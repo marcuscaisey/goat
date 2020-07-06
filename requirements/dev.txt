@@ -7,24 +7,32 @@
 appdirs==1.4.4            # via black
 asgiref==3.2.10           # via -r main.txt, django
 attrs==19.3.0             # via black, pytest
+bcrypt==3.1.7             # via paramiko
 black==19.10b0            # via -r dev.in
+cffi==1.14.0              # via bcrypt, cryptography, pynacl
 click==7.1.2              # via black, pip-tools
+cryptography==2.9.2       # via paramiko
 django-environ==0.4.5     # via -r main.txt
 django==3.0.7             # via -r main.txt
+fabric==2.5.0             # via -r dev.in
 gunicorn==20.0.4          # via -r main.txt
+invoke==1.4.1             # via fabric
 more-itertools==8.4.0     # via pytest
 packaging==20.4           # via pytest
+paramiko==2.7.1           # via fabric
 pathspec==0.8.0           # via black
 pip-tools==5.2.1          # via -r dev.in
 pluggy==0.13.1            # via pytest
 py==1.8.2                 # via pytest
+pycparser==2.20           # via cffi
+pynacl==1.4.0             # via paramiko
 pyparsing==2.4.7          # via packaging
 pytest-django==3.9.0      # via -r dev.in
 pytest==5.4.3             # via -r dev.in, pytest-django
 pytz==2020.1              # via -r main.txt, django
 regex==2020.6.8           # via black
 selenium==3.141.0         # via -r dev.in
-six==1.15.0               # via packaging, pip-tools
+six==1.15.0               # via bcrypt, cryptography, packaging, pip-tools, pynacl
 sqlparse==0.3.1           # via -r main.txt, django
 toml==0.10.1              # via black
 typed-ast==1.4.1          # via black

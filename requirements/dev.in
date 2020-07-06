@@ -1,5 +1,6 @@
 -r main.txt
 black
+fabric==2.5.0
 selenium==3.141.0
 pip-tools==5.2.1
 pytest==5.4.3
