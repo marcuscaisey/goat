@@ -2,7 +2,6 @@ version: "3.7"
 
 services:
   traefik:
-    container_name: traefik
     image: traefik:v2.2.1
     command:
     - "--accesslog=true"
@@ -21,29 +20,27 @@ services:
     - "443:443"
     volumes:
     - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    - "/srv/superlists/letsencrypt:/letsencrypt"
+    - "/srv/app/letsencrypt:/letsencrypt"
 
-  superlists:
-    container_name: superlists
+  app:
     build: .
     volumes:
-    - "/srv/superlists:/usr/src/superlists/data"
+    - "/srv/app:/usr/src/app/data"
     labels:
     - "traefik.enable=true"
-    - "traefik.http.routers.superlists.entryPoints=https"
-    - "traefik.http.routers.superlists.rule=Host(`$DOMAIN`, `www.$DOMAIN`)"
-    - "traefik.http.routers.superlists.priority=1"
-    - "traefik.http.routers.superlists.middlewares=redirect-www"
+    - "traefik.http.routers.app.entryPoints=https"
+    - "traefik.http.routers.app.rule=Host(`$DOMAIN`, `www.$DOMAIN`)"
+    - "traefik.http.routers.app.priority=1"
+    - "traefik.http.routers.app.middlewares=redirect-www"
     - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\."
     - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://"
     - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
 
   nginx:
-    container_name: nginx
     image: nginx:1.19.0
     volumes:
-    - "./nginx.conf:/etc/nginx/conf.d/superlists.conf:ro"
-    - "/srv/superlists/static:/srv/superlists/static:ro"
+    - "./nginx.conf:/etc/nginx/conf.d/app.conf:ro"
+    - "/srv/app/static:/srv/app/static:ro"
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.nginx.entryPoints=https"

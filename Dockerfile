@@ -2,7 +2,7 @@ FROM python:3.8.2-slim-buster
 
 EXPOSE 8000
 
-WORKDIR /usr/src/superlists
+WORKDIR /usr/src/app
 
 RUN mkdir data
 
