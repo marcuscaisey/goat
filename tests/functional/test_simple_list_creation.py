@@ -1,61 +1,9 @@
-import os
 import re
-import time
 
-import pytest
-from selenium import webdriver
-from selenium.common import exceptions as selenium_exceptions
 from selenium.webdriver.common.keys import Keys
 
-MAX_WAIT = 10
 
-
-@pytest.fixture
-def browser_factory():
-    """A factory which returns new firefox browsers to use during tests."""
-    browsers = []
-
-    def browser_factory():
-        browser = webdriver.Firefox()
-        browsers.append(browser)
-        return browser
-
-    yield browser_factory
-
-    for browser in browsers:
-        browser.quit()
-
-
-@pytest.fixture
-def browser(browser_factory):
-    """A new browser instance."""
-    return browser_factory()
-
-
-@pytest.fixture(scope="session")
-def live_server_url(live_server):
-    return os.getenv("STAGING_SERVER", live_server.url)
-
-
-def wait_for_row_in_todo_table(text, browser):
-    """
-    A function which checks if a row with the given text is in the to-do list
-    table.
-    """
-    start = time.time()
-    while True:
-        try:
-            table = browser.find_element_by_id("to-do_items")
-            rows = table.find_elements_by_tag_name("tr")
-            assert text in [row.text for row in rows]
-            return
-        except (AssertionError, selenium_exceptions.WebDriverException):
-            if time.time() - start > MAX_WAIT:
-                raise
-            time.sleep(0.5)
-
-
-def test_can_start_a_list_for_one_user(browser, live_server_url):
+def test_can_start_a_list_for_one_user(browser, live_server_url, wait_for_row_in_todo_table):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
     browser.get(live_server_url)
 
@@ -91,7 +39,7 @@ def test_can_start_a_list_for_one_user(browser, live_server_url):
     # Satisfied, she goes back to sleep.
 
 
-def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_server_url):
+def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_server_url, wait_for_row_in_todo_table):
     lists_url_pattern = r"/lists/.+"
 
     # Edith start a new to-do list
@@ -134,30 +82,3 @@ def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_
     assert "Buy peacock feathers" not in page_text
 
     # Francis is done for now as well
-
-
-def test_layout(browser, live_server_url):
-    browser.set_window_size(1024, 768)
-
-    browser.get(live_server_url)
-
-    input_ = browser.find_element_by_id("new_item_input")
-    assert input_.location["x"] + input_.size["width"] / 2 == pytest.approx(512, abs=10)
-
-
-def test_cannot_add_empty_list_items(browser, live_server_url):
-    # Edith goes to the home page and accidentally tries to submit an empty list
-    # item. She hints Enter on the empty input box
-
-    # The home page refreshes and there is an error message saying that list
-    # items cannot be blank
-
-    # She tries again with some text for the item, which now works
-
-    # Perversely, she now decides to submit a second blank list item
-
-    # She receives a similar warning on the list page
-
-    # And she can correct it by filling some text in
-
-    pytest.fail("write me!")
