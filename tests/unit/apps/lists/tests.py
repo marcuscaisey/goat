@@ -1,7 +1,7 @@
 import pytest
 from pytest_django.asserts import assertRedirects, assertTemplateUsed
 
-from .models import Item, List
+from lists.models import Item, List
 
 
 def assert_template_used(response, template):
