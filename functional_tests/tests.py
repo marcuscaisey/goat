@@ -10,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 MAX_WAIT = 10
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def browser_factory():
     """A factory which returns new firefox browsers to use during tests."""
     browsers = []
@@ -85,7 +85,6 @@ def test_can_start_a_list_for_one_user(browser_factory, live_server_url):
     wait_for_row_in_todo_table("2: Use peacock feathers to make a fly", browser)
 
     # Satisfied, she goes back to sleep.
-    browser.quit()
 
 
 def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_server_url):
@@ -105,7 +104,6 @@ def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_
     assert re.search(lists_url_pattern, edith_list_url)
 
     # Edith is done with her to-do list for now
-    edith_browser.quit()
 
     # Now a new user, Francis, comes along to the site
     francis_browser = browser_factory()
@@ -132,7 +130,6 @@ def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_
     assert "Buy peacock feathers" not in page_text
 
     # Francis is done for now as well
-    francis_browser.quit()
 
 
 def test_layout(browser_factory, live_server_url):
@@ -143,5 +140,3 @@ def test_layout(browser_factory, live_server_url):
 
     input_ = browser.find_element_by_id("new_item_input")
     assert input_.location["x"] + input_.size["width"] / 2 == pytest.approx(512, abs=10)
-
-    browser.quit()
