@@ -26,6 +26,12 @@ def browser_factory():
         browser.quit()
 
 
+@pytest.fixture
+def browser(browser_factory):
+    """A new browser instance."""
+    return browser_factory()
+
+
 @pytest.fixture(scope="session")
 def live_server_url(live_server):
     return os.getenv("STAGING_SERVER", live_server.url)
@@ -49,10 +55,8 @@ def wait_for_row_in_todo_table(text, browser):
             time.sleep(0.5)
 
 
-def test_can_start_a_list_for_one_user(browser_factory, live_server_url):
+def test_can_start_a_list_for_one_user(browser, live_server_url):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
-    browser = browser_factory()
-
     browser.get(live_server_url)
 
     # She notices the page title and header mention to-do lists.
@@ -132,8 +136,7 @@ def test_multiple_users_can_start_lists_at_different_urls(browser_factory, live_
     # Francis is done for now as well
 
 
-def test_layout(browser_factory, live_server_url):
-    browser = browser_factory()
+def test_layout(browser, live_server_url):
     browser.set_window_size(1024, 768)
 
     browser.get(live_server_url)
