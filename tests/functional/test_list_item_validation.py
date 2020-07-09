@@ -15,7 +15,7 @@ def test_cannot_add_empty_list_items(browser, live_server_url, wait_for, wait_fo
 
     # She tries again with some text for the item, which now works
     browser.find_element_by_id("new_item_input").send_keys("Buy milk", Keys.ENTER)
-    wait_for_row_in_todo_table("1. Buy milk", browser)
+    wait_for_row_in_todo_table("1: Buy milk", browser)
     with pytest.raises(selenium_exceptions.NoSuchElementException):
         browser.find_element_by_css_selector(".is-danger")
 

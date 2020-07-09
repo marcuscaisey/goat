@@ -27,6 +27,9 @@
           <div class="control">
             <input class="input" name="item_text" id="new_item_input" placeholder="Enter a to-do item">
           </div>
+          {% if error %}
+            <p class="help is-danger">{{ error }}</p>
+          {% endif %}
         </div>
       </form>
 

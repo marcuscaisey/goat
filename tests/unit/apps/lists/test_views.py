@@ -61,6 +61,19 @@ class TestNewListView:
         list_ = List.objects.first()
         assert_redirects(response, f"/lists/{list_.pk}/")
 
+    @pytest.mark.django_db
+    def test_validation_errors_are_sent_back_to_home_page_template(self, client, assert_template_used):
+        response = client.post("/lists/new/", data={"item_text": ""})
+        assert response.status_code == 200
+        assert_template_used(response, "lists/home.html")
+        assert response.context["error"] == "You can't have an empty list item"
+
+    @pytest.mark.django_db
+    def test_empty_list_items_arent_saved(self, client):
+        client.post("/lists/new/", data={"item_text": ""})
+        assert Item.objects.count() == 0
+        assert List.objects.count() == 0
+
 
 class TestNewItemView:
     @pytest.mark.django_db
