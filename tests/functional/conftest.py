@@ -57,3 +57,38 @@ def wait_for_row_in_todo_table():
                 time.sleep(0.5)
 
     return wait_for_row_in_todo_table
+
+
+@pytest.fixture
+def wait_for():
+    """
+    Assert on the result of a callable. If an AssertionError or
+    WebDriverException is raised, keep retrying the callable. Once a period of
+    time has passed, allow the exception to be raised.
+
+    Args:
+        f (callable): A callable to assert on.
+        timeout (float): The number of seconds until the callable should stop
+            being retried. Defaults to 10.
+        wait_time (float): The number of seconds to wait between retries of the
+            callable. Defaults to 0.5.
+
+    Raises:
+        AssertionError: If timeout seconds have passed and the callable returns
+            False.
+        WebDriverException: If timeout seconds have passed and the callable
+            raises a WebDriverException.
+    """
+
+    def wait_for(f, timeout=10, wait_time=0.5):
+        start = time.time()
+        while True:
+            try:
+                assert f()
+                return
+            except (AssertionError, selenium_exceptions.WebDriverException):
+                if time.time() - start > timeout:
+                    raise
+                time.sleep(wait_time)
+
+    return wait_for
