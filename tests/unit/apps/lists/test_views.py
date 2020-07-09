@@ -33,6 +33,27 @@ class TestListView:
         response = client.get(f"/lists/{list_.pk}/")
         assert response.context["list"] == list_
 
+    @pytest.mark.django_db
+    def test_can_save_a_POST_request_to_an_existing_list(self, client):
+        list_ = List.objects.create()
+
+        client.post(f"/lists/{list_.pk}/", {"item_text": "A new list item"})
+
+        saved_items = Item.objects
+        assert saved_items.count() == 1
+
+        saved_item = saved_items.first()
+        assert saved_item.text == "A new list item"
+        assert saved_item.list == list_
+
+    @pytest.mark.django_db
+    def test_redirects_to_list_view(self, client, assert_redirects):
+        list_ = List.objects.create()
+
+        response = client.post(f"/lists/{list_.pk}/", {"item_text": "A new list item"})
+
+        assert_redirects(response, f"/lists/{list_.pk}/")
+
 
 class TestHome:
     @pytest.mark.django_db
@@ -73,26 +94,3 @@ class TestNewListView:
         client.post("/lists/new/", data={"item_text": ""})
         assert Item.objects.count() == 0
         assert List.objects.count() == 0
-
-
-class TestNewItemView:
-    @pytest.mark.django_db
-    def test_can_a_POST_request_to_an_existing_list(self, client):
-        list_ = List.objects.create()
-
-        client.post(f"/lists/{list_.pk}/add_item/", {"item_text": "A new list item"})
-
-        saved_items = Item.objects
-        assert saved_items.count() == 1
-
-        saved_item = saved_items.first()
-        assert saved_item.text == "A new list item"
-        assert saved_item.list == list_
-
-    @pytest.mark.django_db
-    def test_redirects_to_list_view(self, client, assert_redirects):
-        list_ = List.objects.create()
-
-        response = client.post(f"/lists/{list_.pk}/add_item/", {"item_text": "A new list item"})
-
-        assert_redirects(response, f"/lists/{list_.pk}/")
