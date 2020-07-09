@@ -19,3 +19,10 @@ class TestItem:
     def test_text_cannot_be_empty(self):
         with pytest.raises(ValidationError):
             Item(text="", list=List.objects.create()).full_clean()
+
+
+class TestList:
+    @pytest.mark.django_db
+    def test_get_absolute_url(self):
+        list_ = List.objects.create()
+        assert list_.get_absolute_url() == f"/lists/{list_.pk}/"
