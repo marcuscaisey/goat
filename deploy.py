@@ -117,8 +117,8 @@ def pull_latest_source(c: fabric.Connection, repo, checkout):
         sub_info("Resetting the working tree")
         c.run("git reset --hard")
 
-        sub_info("Pulling the latest source")
-        c.run("git pull")
+        sub_info("Fetching the latest source")
+        c.run(f"git fetch origin {checkout}")
     else:
         if repo is None:
             repo = prompt("Enter repository to pull source from")
