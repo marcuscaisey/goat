@@ -1,22 +1,11 @@
 import pytest
-from pytest_django.asserts import assertRedirects, assertTemplateUsed
 
 from lists.models import Item, List
 
 
-def assert_template_used(response, template):
-    """Assert that a response used a specific template."""
-    assertTemplateUsed(response, template)
-
-
-def assert_redirects(response, url):
-    """Assert that a response redirects to a specific url."""
-    assertRedirects(response, url)
-
-
 class TestListView:
     @pytest.mark.django_db
-    def test_uses_list_template(self, client):
+    def test_uses_list_template(self, client, assert_template_used):
         list_ = List.objects.create()
         response = client.get(f"/lists/{list_.pk}/")
         assert_template_used(response, "lists/list.html")
@@ -47,7 +36,7 @@ class TestListView:
 
 class TestHome:
     @pytest.mark.django_db
-    def test_uses_home_template(self, client):
+    def test_uses_home_template(self, client, assert_template_used):
         response = client.get("/")
         assert_template_used(response, "lists/home.html")
 
@@ -67,7 +56,7 @@ class TestNewListView:
         assert items.first().text == "A new list item"
 
     @pytest.mark.django_db
-    def test_redirects_after_POST(self, client):
+    def test_redirects_after_POST(self, client, assert_redirects):
         response = client.post("/lists/new/", data={"item_text": "A new list item"})
         list_ = List.objects.first()
         assert_redirects(response, f"/lists/{list_.pk}/")
@@ -88,34 +77,9 @@ class TestNewItemView:
         assert saved_item.list == list_
 
     @pytest.mark.django_db
-    def test_redirects_to_list_view(self, client):
+    def test_redirects_to_list_view(self, client, assert_redirects):
         list_ = List.objects.create()
 
         response = client.post(f"/lists/{list_.pk}/add_item/", {"item_text": "A new list item"})
 
         assert_redirects(response, f"/lists/{list_.pk}/")
-
-
-class ListAndItemModelsTest:
-    def test_saving_and_retrieving_items(self):
-        list_ = List()
-        list_.save()
-
-        first_item = Item()
-        first_item.text = "The first (ever) list item"
-        first_item.list = list_
-        first_item.save()
-
-        second_item = Item()
-        second_item.text = "Item the second"
-        second_item.list = list_
-        second_item.save()
-
-        saved_list = List.objects.first()
-        first_saved_item, second_saved_item = Item.objects.all()
-
-        assert saved_list == list_
-        assert first_saved_item.text == "The first (ever) list item"
-        assert first_saved_item.list == list_
-        assert second_saved_item.text == "Item the second"
-        assert second_saved_item.list == list_
