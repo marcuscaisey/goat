@@ -5,12 +5,19 @@ from .models import Item, List
 
 
 def view_list(request, pk):
-    if request.method == "POST":
-        list_ = List.objects.get(pk=pk)
-        Item.objects.create(text=request.POST["item_text"], list=list_)
-        return redirect(f"/lists/{list_.pk}/")
+    error = None
+    list_ = List.objects.get(pk=pk)
 
-    return render(request, "lists/list.html", {"list": List.objects.get(pk=pk)})
+    if request.method == "POST":
+        item = Item(text=request.POST["item_text"], list=list_)
+        try:
+            item.full_clean()
+            item.save()
+            return redirect(f"/lists/{list_.pk}/")
+        except ValidationError:
+            error = "You can't have an empty list item"
+
+    return render(request, "lists/list.html", {"list": list_, "error": error})
 
 
 def home_page(request):

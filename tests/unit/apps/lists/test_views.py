@@ -3,7 +3,7 @@ import pytest
 from lists.models import Item, List
 
 
-class TestListView:
+class TestViewList:
     @pytest.mark.django_db
     def test_uses_list_template(self, client, assert_template_used):
         list_ = List.objects.create()
@@ -54,6 +54,20 @@ class TestListView:
 
         assert_redirects(response, f"/lists/{list_.pk}/")
 
+    @pytest.mark.django_db
+    def test_validation_errors_are_sent_back_to_list_view_template(self, client, assert_template_used):
+        list_ = List.objects.create()
+        response = client.post(f"/lists/{list_.pk}/", data={"item_text": ""})
+        assert response.status_code == 200
+        assert_template_used(response, "lists/list.html")
+        assert response.context["error"] == "You can't have an empty list item"
+
+    @pytest.mark.django_db
+    def test_empty_list_items_arent_saved(self, client):
+        list_ = List.objects.create()
+        client.post(f"/lists/{list_.pk}/", data={"item_text": ""})
+        assert Item.objects.count() == 0
+
 
 class TestHome:
     @pytest.mark.django_db
@@ -67,7 +81,7 @@ class TestHome:
         assert Item.objects.count() == 0
 
 
-class TestNewListView:
+class TestNewList:
     @pytest.mark.django_db
     def test_can_save_POST_request(self, client):
         client.post("/lists/new/", data={"item_text": "A new list item"})
