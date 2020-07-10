@@ -92,3 +92,13 @@ def wait_for():
                 time.sleep(wait_time)
 
     return wait_for
+
+
+@pytest.fixture
+def get_item_input():
+    """A function which gets the item input element from the page."""
+
+    def get_item_input(browser):
+        return browser.find_element_by_id("id_text")
+
+    return get_item_input
