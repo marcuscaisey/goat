@@ -1,5 +1,6 @@
 import pytest
 
+from lists.forms import ItemForm
 from lists.models import Item, List
 
 
@@ -74,6 +75,11 @@ class TestHome:
     def test_uses_home_template(self, client, assert_template_used):
         response = client.get("/")
         assert_template_used(response, "lists/home.html")
+
+    @pytest.mark.django_db
+    def test_uses_item_form(self, client):
+        response = client.get("/")
+        assert isinstance(response.context["form"], ItemForm)
 
     @pytest.mark.django_db
     def test_GET_doesnt_save_item(self, client):

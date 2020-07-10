@@ -14,6 +14,7 @@ click==7.1.2              # via -r dev.in, black, pip-tools
 cryptography==2.9.2       # via paramiko
 django-environ==0.4.5     # via -r main.txt
 django-extensions==3.0.2  # via -r dev.in
+django-widget-tweaks==1.4.8  # via -r main.txt
 django==3.0.7             # via -r main.txt
 fabric==2.5.0             # via -r dev.in, patchwork
 gunicorn==20.0.4          # via -r main.txt
