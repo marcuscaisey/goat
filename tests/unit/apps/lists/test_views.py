@@ -38,7 +38,7 @@ class TestViewList:
     def test_can_save_a_POST_request_to_an_existing_list(self, client):
         list_ = List.objects.create()
 
-        client.post(f"/lists/{list_.pk}/", {"item_text": "A new list item"})
+        client.post(f"/lists/{list_.pk}/", {"text": "A new list item"})
 
         saved_items = Item.objects
         assert saved_items.count() == 1
@@ -51,14 +51,14 @@ class TestViewList:
     def test_redirects_to_list_view(self, client, assert_redirects):
         list_ = List.objects.create()
 
-        response = client.post(f"/lists/{list_.pk}/", {"item_text": "A new list item"})
+        response = client.post(f"/lists/{list_.pk}/", {"text": "A new list item"})
 
         assert_redirects(response, f"/lists/{list_.pk}/")
 
     @pytest.mark.django_db
     def test_validation_errors_are_sent_back_to_list_view_template(self, client, assert_template_used):
         list_ = List.objects.create()
-        response = client.post(f"/lists/{list_.pk}/", data={"item_text": ""})
+        response = client.post(f"/lists/{list_.pk}/", data={"text": ""})
         assert response.status_code == 200
         assert_template_used(response, "lists/list.html")
         assert response.context["error"] == "You can't have an empty list item"
@@ -66,7 +66,7 @@ class TestViewList:
     @pytest.mark.django_db
     def test_empty_list_items_arent_saved(self, client):
         list_ = List.objects.create()
-        client.post(f"/lists/{list_.pk}/", data={"item_text": ""})
+        client.post(f"/lists/{list_.pk}/", data={"text": ""})
         assert Item.objects.count() == 0
 
 
@@ -90,7 +90,7 @@ class TestHome:
 class TestNewList:
     @pytest.mark.django_db
     def test_can_save_POST_request(self, client):
-        client.post("/lists/new/", data={"item_text": "A new list item"})
+        client.post("/lists/new/", data={"text": "A new list item"})
 
         items = Item.objects.all()
         assert items.count() == 1
@@ -98,19 +98,19 @@ class TestNewList:
 
     @pytest.mark.django_db
     def test_redirects_after_POST(self, client, assert_redirects):
-        response = client.post("/lists/new/", data={"item_text": "A new list item"})
+        response = client.post("/lists/new/", data={"text": "A new list item"})
         list_ = List.objects.first()
         assert_redirects(response, f"/lists/{list_.pk}/")
 
     @pytest.mark.django_db
     def test_validation_errors_are_sent_back_to_home_page_template(self, client, assert_template_used):
-        response = client.post("/lists/new/", data={"item_text": ""})
+        response = client.post("/lists/new/", data={"text": ""})
         assert response.status_code == 200
         assert_template_used(response, "lists/home.html")
         assert response.context["error"] == "You can't have an empty list item"
 
     @pytest.mark.django_db
     def test_empty_list_items_arent_saved(self, client):
-        client.post("/lists/new/", data={"item_text": ""})
+        client.post("/lists/new/", data={"text": ""})
         assert Item.objects.count() == 0
         assert List.objects.count() == 0
