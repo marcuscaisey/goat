@@ -1,6 +1,7 @@
 -r main.txt
 black
 click==7.1.2
+django-extensions
 fabric==2.5.0
 selenium==3.141.0
 patchwork==1.0.1

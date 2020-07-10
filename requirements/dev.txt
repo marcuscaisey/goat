@@ -13,6 +13,7 @@ cffi==1.14.0              # via bcrypt, cryptography, pynacl
 click==7.1.2              # via -r dev.in, black, pip-tools
 cryptography==2.9.2       # via paramiko
 django-environ==0.4.5     # via -r main.txt
+django-extensions==3.0.2  # via -r dev.in
 django==3.0.7             # via -r main.txt
 fabric==2.5.0             # via -r dev.in, patchwork
 gunicorn==20.0.4          # via -r main.txt
@@ -39,7 +40,7 @@ python-dotenv==0.14.0     # via -r dev.in
 pytz==2020.1              # via -r main.txt, django
 regex==2020.6.8           # via black
 selenium==3.141.0         # via -r dev.in
-six==1.15.0               # via bcrypt, cryptography, packaging, pip-tools, pynacl
+six==1.15.0               # via bcrypt, cryptography, django-extensions, packaging, pip-tools, pynacl
 sqlparse==0.3.1           # via -r main.txt, django
 toml==0.10.1              # via black
 typed-ast==1.4.1          # via black
