@@ -26,12 +26,9 @@ def home_page(request):
 
 
 def new_list(request):
-    list_ = List.objects.create()
-    item = Item(text=request.POST["text"], list=list_)
-    try:
-        item.full_clean()
-        item.save()
-    except ValidationError:
-        list_.delete()
-        return render(request, "lists/home.html", {"error": "You can't have an empty list item"})
-    return redirect(list_)
+    form = ItemForm(request.POST)
+    if form.is_valid():
+        item = form.save()
+        return redirect(item.list)
+    else:
+        return render(request, "lists/home.html", {"form": form})

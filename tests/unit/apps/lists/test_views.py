@@ -103,11 +103,15 @@ class TestNewList:
         assert_redirects(response, f"/lists/{list_.pk}/")
 
     @pytest.mark.django_db
-    def test_validation_errors_are_sent_back_to_home_page_template(self, client, assert_template_used):
+    def test_invalid_input_renders_home_template(self, client, assert_template_used):
         response = client.post("/lists/new/", data={"text": ""})
         assert response.status_code == 200
         assert_template_used(response, "lists/home.html")
-        assert response.context["error"] == "You can't have an empty list item"
+
+    @pytest.mark.django_db
+    def test_invalid_input_passes_form_to_template(self, client):
+        response = client.post("/lists/new/", data={"text": ""})
+        assert isinstance(response.context["form"], ItemForm)
 
     @pytest.mark.django_db
     def test_empty_list_items_arent_saved(self, client):
