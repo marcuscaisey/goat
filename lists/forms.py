@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from .models import Item, List
 
@@ -18,20 +19,36 @@ class PlaceholdersMixin:
 
 
 class ItemForm(PlaceholdersMixin, forms.ModelForm):
+    def __init__(self, *args, list_=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.instance.list = list_
+
     class Meta:
         model = Item
         fields = ("text",)
         placeholders = {"text": "Enter a to-do item"}
         widgets = {"text": forms.TextInput}
-        error_messages = {"text": {"required": "You can't save an empty list item"}}
+        error_messages = {
+            "text": {"required": "You can't save an empty list item", "unique": "You can't save a duplicate item"}
+        }
 
-    def save(self, commit=True, list_=None):
-        instance = super().save(commit=False)
-        if list_ is None:
-            list_ = List.objects.create()
-        instance.list = list_
+    def save(self, commit=True):
+        """
+        Create a list if the internal instance doesn't already have one set.
+        """
+        if not hasattr(self.instance, "list"):
+            self.instance.list = List.objects.create()
+        return super().save(commit=commit)
 
-        if commit:
-            instance.save()
-
-        return instance
+    def clean_text(self):
+        """
+        Check for items in the same list with the same list text if the
+        internal instance has a list set.
+        """
+        if (
+            hasattr(self.instance, "list")
+            and Item.objects.filter(text=self.cleaned_data["text"], list=self.instance.list).exists()
+        ):
+            self._update_errors(ValidationError({"text": ValidationError("Text is not unique", code="unique")}))
+        else:
+            return self.cleaned_data["text"]

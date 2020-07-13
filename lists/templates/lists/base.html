@@ -29,7 +29,7 @@
             {{ form.text|add_class:"input" }}
           </div>
           {% if form.errors %}
-            <p class="help is-danger">{{ form.text.errors }}</p>
+            <div class="help is-danger">{{ form.text.errors }}</div>
           {% endif %}
         </div>
       </form>

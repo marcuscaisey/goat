@@ -8,9 +8,9 @@ def view_list(request, pk):
     list_ = List.objects.get(pk=pk)
 
     if request.method == "POST":
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, list_=list_)
         if form.is_valid():
-            form.save(list_=list_)
+            form.save()
             return redirect(list_)
     else:
         form = ItemForm()

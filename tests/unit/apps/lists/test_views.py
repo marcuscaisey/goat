@@ -84,6 +84,30 @@ class TestViewList:
     def test_empty_list_items_arent_saved(self, empty_input_response):
         assert Item.objects.count() == 0
 
+    @pytest.fixture
+    def duplicate_item_response(self, client):
+        """Response to a POST request with duplicate text input."""
+        list_ = List.objects.create()
+        Item.objects.create(text="item text", list=list_)
+        return client.post(f"/lists/{list_.pk}/", data={"text": "item text"})
+
+    @pytest.mark.django_db
+    def test_duplicate_list_item_renders_list_template(self, duplicate_item_response, assert_template_used):
+        assert duplicate_item_response.status_code == 200
+        assert_template_used(duplicate_item_response, "lists/list.html")
+
+    @pytest.mark.django_db
+    def test_duplicate_list_item_passes_list_to_template(self, duplicate_item_response):
+        assert isinstance(duplicate_item_response.context["list"], List)
+
+    @pytest.mark.django_db
+    def test_duplicate_list_item_passes_form_to_template(self, duplicate_item_response):
+        assert isinstance(duplicate_item_response.context["form"], ItemForm)
+
+    @pytest.mark.django_db
+    def test_duplicate_list_items_arent_saved(self, duplicate_item_response):
+        assert Item.objects.count() == 1
+
 
 class TestHome:
     @pytest.mark.django_db
@@ -119,7 +143,7 @@ class TestNewList:
 
     @pytest.fixture
     def empty_input_response(self, client):
-        """Response to a POST request with invalid input."""
+        """Response to a POST request with empty text input."""
         return client.post(f"/lists/new/", data={"text": ""})
 
     @pytest.mark.django_db
