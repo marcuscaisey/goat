@@ -2,30 +2,7 @@ import os
 import time
 
 import pytest
-from selenium import webdriver
 from selenium.common import exceptions as selenium_exceptions
-
-
-@pytest.fixture
-def browser_factory():
-    """A factory which returns new firefox browsers to use during tests."""
-    browsers = []
-
-    def browser_factory():
-        browser = webdriver.Firefox()
-        browsers.append(browser)
-        return browser
-
-    yield browser_factory
-
-    for browser in browsers:
-        browser.quit()
-
-
-@pytest.fixture
-def browser(browser_factory):
-    """A new browser instance."""
-    return browser_factory()
 
 
 @pytest.fixture(scope="session")
