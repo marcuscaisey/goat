@@ -3,7 +3,7 @@ import re
 from selenium.webdriver.common.keys import Keys
 
 
-def test_can_start_a_list_for_one_user(selenium, base_url, wait_for_row_in_todo_table, get_item_input):
+def test_can_start_a_list_for_one_user(selenium, base_url, wait_for, row_in_todo_table, get_item_input):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
     selenium.get(base_url)
 
@@ -23,7 +23,7 @@ def test_can_start_a_list_for_one_user(selenium, base_url, wait_for_row_in_todo_
     # list.
     input_.send_keys(Keys.ENTER)
 
-    wait_for_row_in_todo_table("1: Buy peacock feathers", selenium)
+    wait_for(row_in_todo_table, "1: Buy peacock feathers")
 
     # There is a still a text box inviting her to add another item. She enters "Use peacock feathers to make a fly"
     # (Edith is very methodical).
@@ -33,14 +33,14 @@ def test_can_start_a_list_for_one_user(selenium, base_url, wait_for_row_in_todo_
     # The page updates again, and now shows both items on her list.
     input_.send_keys(Keys.ENTER)
 
-    wait_for_row_in_todo_table("1: Buy peacock feathers", selenium)
-    wait_for_row_in_todo_table("2: Use peacock feathers to make a fly", selenium)
+    wait_for(row_in_todo_table, "1: Buy peacock feathers")
+    wait_for(row_in_todo_table, "2: Use peacock feathers to make a fly")
 
     # Satisfied, she goes back to sleep.
 
 
 def test_multiple_users_can_start_lists_at_different_urls(
-    selenium, base_url, wait_for_row_in_todo_table, get_item_input
+    selenium, base_url, wait_for, row_in_todo_table, get_item_input
 ):
     lists_url_pattern = r"/lists/.+"
 
@@ -49,7 +49,7 @@ def test_multiple_users_can_start_lists_at_different_urls(
     input_ = get_item_input()
     input_.send_keys("Buy peacock feathers")
     input_.send_keys(Keys.ENTER)
-    wait_for_row_in_todo_table("1: Buy peacock feathers", selenium)
+    wait_for(row_in_todo_table, "1: Buy peacock feathers")
 
     # She notices that her list has a new URL
     edith_list_url = selenium.current_url
@@ -69,7 +69,7 @@ def test_multiple_users_can_start_lists_at_different_urls(
     input_ = get_item_input()
     input_.send_keys("Buy milk")
     input_.send_keys(Keys.ENTER)
-    wait_for_row_in_todo_table("1: Buy milk", selenium)
+    wait_for(row_in_todo_table, "1: Buy milk")
 
     # Francis gets his own unique URL
     francis_list_url = selenium.current_url

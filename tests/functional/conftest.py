@@ -10,49 +10,47 @@ def base_url(live_server, base_url):
 
 
 @pytest.fixture
-def wait_for_row_in_todo_table(wait_for):
+def row_in_todo_table(selenium):
     """
-    A function which checks if a row with the given text is in the to-do list
+    A function which returns if a row with the given text is in the to-do list
     table.
     """
 
-    def wait_for_row_in_todo_table(text, browser):
-        def row_in_todo_table():
-            table = browser.find_element_by_id("to-do_items")
-            rows = table.find_elements_by_tag_name("tr")
-            return text in [row.text for row in rows]
+    def row_in_todo_table(text):
+        table = selenium.find_element_by_id("to-do_items")
+        rows = table.find_elements_by_tag_name("tr")
+        return text in [row.text for row in rows]
 
-        return wait_for(row_in_todo_table)
-
-    return wait_for_row_in_todo_table
+    return row_in_todo_table
 
 
 @pytest.fixture
 def wait_for():
     """
-    Assert on the result of a callable. If an AssertionError or
-    WebDriverException is raised, keep retrying the callable. Once a period of
-    time has passed, allow the exception to be raised.
+    Assert on the result of a callable, f. If an AssertionError or
+    WebDriverException is raised, keep retrying f. Once a period of time has
+    passed, allow the exception to be raised.
 
     Args:
         f (callable): A callable to assert on.
-        timeout (float): The number of seconds until the callable should stop
-            being retried. Defaults to 10.
-        wait_time (float): The number of seconds to wait between retries of the
-            callable. Defaults to 0.5.
+        *args: Positional arguments to call f with.
+        timeout (float): The number of seconds until f should stop being
+            retried. Defaults to 10.
+        wait_time (float): The number of seconds to wait between retries of f.
+            Defaults to 0.5.
+        **kwargs: Keyword arguments to call f with.
 
     Raises:
-        AssertionError: If timeout seconds have passed and the callable returns
-            False.
-        WebDriverException: If timeout seconds have passed and the callable
-            raises a WebDriverException.
+        AssertionError: If timeout seconds have passed and f returns False.
+        WebDriverException: If timeout seconds have passed and f raises a
+            WebDriverException.
     """
 
-    def wait_for(f, timeout=10, wait_time=0.5):
+    def wait_for(f, *args, timeout=10, wait_time=0.5, **kwargs):
         start = time.time()
         while True:
             try:
-                assert f()
+                assert f(*args, **kwargs)
                 return
             except (AssertionError, selenium_exceptions.WebDriverException):
                 if time.time() - start > timeout:

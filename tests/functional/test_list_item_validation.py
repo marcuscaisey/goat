@@ -1,7 +1,7 @@
 from selenium.webdriver.common.keys import Keys
 
 
-def test_cannot_add_empty_list_items(selenium, base_url, wait_for, wait_for_row_in_todo_table, get_item_input):
+def test_cannot_add_empty_list_items(selenium, base_url, wait_for, row_in_todo_table, get_item_input):
     # Edith goes to the home page and accidentally tries to submit an empty list
     # item. She hints Enter on the empty input box
     selenium.get(base_url)
@@ -13,7 +13,7 @@ def test_cannot_add_empty_list_items(selenium, base_url, wait_for, wait_for_row_
 
     # She tries again with some text for the item, which now works
     get_item_input().send_keys("Buy milk", Keys.ENTER)
-    wait_for_row_in_todo_table("1: Buy milk", selenium)
+    wait_for(row_in_todo_table, "1: Buy milk")
 
     # Perversely, she now decides to submit a second blank list item
     get_item_input().send_keys(Keys.ENTER)
@@ -23,5 +23,5 @@ def test_cannot_add_empty_list_items(selenium, base_url, wait_for, wait_for_row_
 
     # And she can correct it by filling some text in
     get_item_input().send_keys("Make tea", Keys.ENTER)
-    wait_for_row_in_todo_table("1: Buy milk", selenium)
-    wait_for_row_in_todo_table("2: Make tea", selenium)
+    wait_for(row_in_todo_table, "1: Buy milk")
+    wait_for(row_in_todo_table, "2: Make tea")
