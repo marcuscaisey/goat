@@ -1,24 +1,21 @@
-from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 
 from .forms import ItemForm
-from .models import Item, List
+from .models import List
 
 
 def view_list(request, pk):
-    error = None
     list_ = List.objects.get(pk=pk)
 
     if request.method == "POST":
-        item = Item(text=request.POST["text"], list=list_)
-        try:
-            item.full_clean()
-            item.save()
+        form = ItemForm(request.POST)
+        if form.is_valid():
+            form.save(list_=list_)
             return redirect(list_)
-        except ValidationError:
-            error = "You can't have an empty list item"
+    else:
+        form = ItemForm()
 
-    return render(request, "lists/list.html", {"list": list_, "error": error})
+    return render(request, "lists/list.html", {"list": list_, "form": form})
 
 
 def home_page(request):

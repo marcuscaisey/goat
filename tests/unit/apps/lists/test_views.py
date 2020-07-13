@@ -29,6 +29,12 @@ class TestViewList:
         assert b"other item 2" not in response.content
 
     @pytest.mark.django_db
+    def test_passes_item_form_to_template(self, client):
+        list_ = List.objects.create()
+        response = client.get(f"/lists/{list_.pk}/")
+        assert isinstance(response.context["form"], ItemForm)
+
+    @pytest.mark.django_db
     def test_passes_list_to_template(self, client):
         list_ = List.objects.create()
         response = client.get(f"/lists/{list_.pk}/")
@@ -55,18 +61,27 @@ class TestViewList:
 
         assert_redirects(response, f"/lists/{list_.pk}/")
 
-    @pytest.mark.django_db
-    def test_validation_errors_are_sent_back_to_list_view_template(self, client, assert_template_used):
+    @pytest.fixture
+    def empty_input_response(self, client):
+        """Response to a POST request with invalid input."""
         list_ = List.objects.create()
-        response = client.post(f"/lists/{list_.pk}/", data={"text": ""})
-        assert response.status_code == 200
-        assert_template_used(response, "lists/list.html")
-        assert response.context["error"] == "You can't have an empty list item"
+        return client.post(f"/lists/{list_.pk}/", data={"text": ""})
 
     @pytest.mark.django_db
-    def test_empty_list_items_arent_saved(self, client):
-        list_ = List.objects.create()
-        client.post(f"/lists/{list_.pk}/", data={"text": ""})
+    def test_empty_input_renders_list_template(self, empty_input_response, assert_template_used):
+        assert empty_input_response.status_code == 200
+        assert_template_used(empty_input_response, "lists/list.html")
+
+    @pytest.mark.django_db
+    def test_empty_input_passes_list_to_template(self, empty_input_response):
+        assert isinstance(empty_input_response.context["list"], List)
+
+    @pytest.mark.django_db
+    def test_empty_input_passes_form_to_template(self, empty_input_response):
+        assert isinstance(empty_input_response.context["form"], ItemForm)
+
+    @pytest.mark.django_db
+    def test_empty_list_items_arent_saved(self, empty_input_response):
         assert Item.objects.count() == 0
 
 
@@ -102,19 +117,21 @@ class TestNewList:
         list_ = List.objects.first()
         assert_redirects(response, f"/lists/{list_.pk}/")
 
-    @pytest.mark.django_db
-    def test_invalid_input_renders_home_template(self, client, assert_template_used):
-        response = client.post("/lists/new/", data={"text": ""})
-        assert response.status_code == 200
-        assert_template_used(response, "lists/home.html")
+    @pytest.fixture
+    def empty_input_response(self, client):
+        """Response to a POST request with invalid input."""
+        return client.post(f"/lists/new/", data={"text": ""})
 
     @pytest.mark.django_db
-    def test_invalid_input_passes_form_to_template(self, client):
-        response = client.post("/lists/new/", data={"text": ""})
-        assert isinstance(response.context["form"], ItemForm)
+    def test_empty_input_renders_home_template(self, empty_input_response, assert_template_used):
+        assert empty_input_response.status_code == 200
+        assert_template_used(empty_input_response, "lists/home.html")
 
     @pytest.mark.django_db
-    def test_empty_list_items_arent_saved(self, client):
-        client.post("/lists/new/", data={"text": ""})
+    def test_empty_input_passes_form_to_template(self, empty_input_response):
+        assert isinstance(empty_input_response.context["form"], ItemForm)
+
+    @pytest.mark.django_db
+    def test_empty_list_items_arent_saved(self, empty_input_response):
         assert Item.objects.count() == 0
         assert List.objects.count() == 0
