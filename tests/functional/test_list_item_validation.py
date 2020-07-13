@@ -1,10 +1,10 @@
 from selenium.webdriver.common.keys import Keys
 
 
-def test_cannot_add_empty_list_items(selenium, live_server_url, wait_for, wait_for_row_in_todo_table, get_item_input):
+def test_cannot_add_empty_list_items(selenium, base_url, wait_for, wait_for_row_in_todo_table, get_item_input):
     # Edith goes to the home page and accidentally tries to submit an empty list
     # item. She hints Enter on the empty input box
-    selenium.get(live_server_url)
+    selenium.get(base_url)
     get_item_input(selenium).send_keys(Keys.ENTER)
 
     # The home page refreshes and there is an error message saying that list

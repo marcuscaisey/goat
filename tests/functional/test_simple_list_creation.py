@@ -3,9 +3,9 @@ import re
 from selenium.webdriver.common.keys import Keys
 
 
-def test_can_start_a_list_for_one_user(selenium, live_server_url, wait_for_row_in_todo_table, get_item_input):
+def test_can_start_a_list_for_one_user(selenium, base_url, wait_for_row_in_todo_table, get_item_input):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
-    selenium.get(live_server_url)
+    selenium.get(base_url)
 
     # She notices the page title and header mention to-do lists.
     assert "To-Do" in selenium.title
@@ -40,12 +40,12 @@ def test_can_start_a_list_for_one_user(selenium, live_server_url, wait_for_row_i
 
 
 def test_multiple_users_can_start_lists_at_different_urls(
-    selenium, live_server_url, wait_for_row_in_todo_table, get_item_input
+    selenium, base_url, wait_for_row_in_todo_table, get_item_input
 ):
     lists_url_pattern = r"/lists/.+"
 
     # Edith start a new to-do list
-    selenium.get(live_server_url)
+    selenium.get(base_url)
     input_ = get_item_input(selenium)
     input_.send_keys("Buy peacock feathers")
     input_.send_keys(Keys.ENTER)
@@ -60,7 +60,7 @@ def test_multiple_users_can_start_lists_at_different_urls(
     # Now a new user, Francis, comes along to the site
 
     # Francis visits the home page. There's no sign of Edith's list
-    selenium.get(live_server_url)
+    selenium.get(base_url)
     page_text = selenium.find_element_by_tag_name("body").text
     assert "Buy peacock feathers" not in page_text
 

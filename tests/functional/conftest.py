@@ -1,4 +1,3 @@
-import os
 import time
 
 import pytest
@@ -6,8 +5,8 @@ from selenium.common import exceptions as selenium_exceptions
 
 
 @pytest.fixture(scope="session")
-def live_server_url(live_server):
-    return os.getenv("STAGING_SERVER", live_server.url)
+def base_url(live_server, base_url):
+    return base_url if base_url else live_server.url
 
 
 @pytest.fixture
