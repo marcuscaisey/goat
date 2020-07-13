@@ -3,16 +3,27 @@ from django import forms
 from .models import Item, List
 
 
-class ItemForm(forms.ModelForm):
+class PlaceholdersMixin:
+    """
+    Sets the placeholders on a Form's widgets. Add a "placeholders" dict to the
+    Meta options, which maps field names to placeholder texts.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["text"].widget.attrs["placeholder"] = "Enter a to-do item"
 
+        placeholders = getattr(self.Meta, "placeholders", {})
+        for field, placeholder in placeholders.items():
+            self.fields[field].widget.attrs["placeholder"] = placeholder
+
+
+class ItemForm(PlaceholdersMixin, forms.ModelForm):
     class Meta:
         model = Item
         fields = ("text",)
-        error_messages = {"text": {"required": "You can't save an empty list item"}}
+        placeholders = {"text": "Enter a to-do item"}
         widgets = {"text": forms.TextInput}
+        error_messages = {"text": {"required": "You can't save an empty list item"}}
 
     def save(self, commit=True, list_=None):
         instance = super().save(commit=False)
