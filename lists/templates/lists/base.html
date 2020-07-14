@@ -8,6 +8,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static "lists/bulma.min.css" %}">
+  <script src="{% static "lists/base.js" %}"></script>
   <title>To-Do Lists</title>
 </head>
 
@@ -29,7 +30,7 @@
             {{ form.text|add_class:"input" }}
           </div>
           {% if form.errors %}
-            <div class="help is-danger">{{ form.text.errors }}</div>
+            <ul id="{{ form.text.id_for_label }}-error" class="help is-danger">{{ form.text.errors }}</ul>
           {% endif %}
         </div>
       </form>
@@ -41,4 +42,5 @@
 
 </body>
 
+<script>setup();</script>
 </html>
