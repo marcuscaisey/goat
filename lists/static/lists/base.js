@@ -7,7 +7,9 @@ class Input {
    * @param {string} inputId - The ID of the input.
    */
   constructor(inputId) {
-    document.getElementById(inputId).addEventListener("keydown", this._keydownHandler);
+    let input = document.getElementById(inputId);
+    input.addEventListener("keydown", this._hideErrorMessage);
+    input.addEventListener("click", this._hideErrorMessage);
   }
 
   /**
@@ -15,7 +17,7 @@ class Input {
    * @param {KeyboardEvent} event - Keydown event from the input.
    * @private
    */
-  _keydownHandler(event) {
+  _hideErrorMessage(event) {
     let error = document.getElementById(`${event.target.id}-error`);
     if (error) {
       error.style.display = "none";

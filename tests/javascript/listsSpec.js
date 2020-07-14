@@ -14,12 +14,17 @@ describe("Input", () => {
     this.error.remove();
   });
 
+  it("shouldn't hide error when no action is made", () => {
+    expect(window.getComputedStyle(this.error).display).not.toBe("none");
+  });
+
   it("should hide error on keypress", () => {
     this.input.dispatchEvent(new Event("keydown"));
     expect(window.getComputedStyle(this.error).display).toBe("none");
   });
 
-  it("shouldn't hide error without keypress", () => {
-    expect(window.getComputedStyle(this.error).display).not.toBe("none");
+  it("should hide error when input is clicked", () => {
+    this.input.dispatchEvent(new Event("click"));
+    expect(window.getComputedStyle(this.error).display).toBe("none");
   });
 });

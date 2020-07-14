@@ -76,3 +76,20 @@ def test_error_messages_are_cleared_on_input(
 
     # She is pleased to see that the error messages disappears
     wait_for(lambda: not get_error_container().is_displayed())
+
+
+def test_error_messages_are_cleared_when_input_clicked(
+    selenium: webdriver.Firefox, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
+):
+    # Alice starts a list and causes a validation error
+    selenium.get(base_url)
+    get_item_input().send_keys("Buy milk", Keys.ENTER)
+    wait_for(row_in_todo_table, "1: Buy milk")
+    get_item_input().send_keys("Buy milk", Keys.ENTER)
+    wait_for(lambda: get_error_container().is_displayed())
+
+    # She clicks the input box to clear the error
+    get_item_input().click()
+
+    # She is pleased to see that the error messages disappears
+    wait_for(lambda: not get_error_container().is_displayed())
