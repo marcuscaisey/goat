@@ -78,6 +78,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+STATICFILES_DIRS = [
+    root("static"),
+]
+
 STATIC_ROOT = env("STATIC_ROOT", default=data("static"))
 
 CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=True)

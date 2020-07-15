@@ -1,8 +1,9 @@
 /**
- * Input element which hides its error message when another character is typed.
- * If the ID of the input is "foo", then the error must have ID "foo-error".
+ * Input element which hides its error message when another character is typed
+ * or it gets clicked. If the ID of the input is "foo", then the error must have
+ * ID "foo-error".
  */
-class Input {
+export default class Input {
   /**
    * @param {string} inputId - The ID of the input.
    */
@@ -23,8 +24,4 @@ class Input {
       error.style.display = "none";
     }
   }
-}
-
-function setup() {
-  new Input("id_text");
 }

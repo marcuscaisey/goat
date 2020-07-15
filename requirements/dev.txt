@@ -12,8 +12,6 @@ black==19.10b0            # via -r dev.in
 certifi==2020.6.20        # via requests
 cffi==1.14.0              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
-cheroot==8.3.1            # via cherrypy
-cherrypy==18.6.0          # via jasmine
 click==7.1.2              # via -r dev.in, black, pip-tools
 cryptography==2.9.2       # via paramiko
 django-environ==0.4.5     # via -r main.txt
@@ -21,21 +19,11 @@ django-extensions==3.0.2  # via -r dev.in
 django-widget-tweaks==1.4.8  # via -r main.txt
 django==3.0.7             # via -r main.txt
 fabric==2.5.0             # via -r dev.in, patchwork
-glob2==0.7                # via jasmine-core
 gunicorn==20.0.4          # via -r main.txt
 idna==2.10                # via requests
 invoke==1.4.1             # via fabric
-jaraco.classes==3.1.0     # via jaraco.collections
-jaraco.collections==3.0.0  # via cherrypy
-jaraco.functools==3.0.1   # via cheroot, jaraco.text, tempora
-jaraco.text==3.2.0        # via jaraco.collections
-jasmine-core==3.5.0       # via jasmine
-jasmine==3.5.0            # via -r dev.in
 jedi==0.17.1              # via ptpython
-jinja2==2.11.2            # via jasmine
-markupsafe==1.1.1         # via jinja2
-more-itertools==8.4.0     # via cheroot, cherrypy, jaraco.classes, jaraco.functools, pytest
-ordereddict==1.1          # via jasmine-core
+more-itertools==8.4.0     # via pytest
 packaging==20.4           # via pytest
 paramiko==2.7.1           # via fabric
 parso==0.7.0              # via jedi
@@ -43,7 +31,6 @@ patchwork==1.0.1          # via -r dev.in
 pathspec==0.8.0           # via black
 pip-tools==5.2.1          # via -r dev.in
 pluggy==0.13.1            # via pytest
-portend==2.6              # via cherrypy
 prompt-toolkit==3.0.5     # via ptpython
 ptpython==3.0.2           # via -r dev.in
 py==1.8.2                 # via pytest
@@ -59,19 +46,16 @@ pytest-selenium==1.17.0   # via -r dev.in
 pytest-variables==1.9.0   # via pytest-selenium
 pytest==5.4.3             # via -r dev.in, pytest-base-url, pytest-django, pytest-html, pytest-metadata, pytest-selenium, pytest-variables
 python-dotenv==0.14.0     # via -r dev.in
-pytz==2020.1              # via -r main.txt, django, tempora
-pyyaml==5.3.1             # via jasmine
+pytz==2020.1              # via -r main.txt, django
 regex==2020.6.8           # via black
 requests==2.24.0          # via pytest-base-url, pytest-selenium
-selenium==3.141.0         # via -r dev.in, jasmine, pytest-selenium
-six==1.15.0               # via bcrypt, cheroot, cryptography, django-extensions, jaraco.collections, jaraco.text, packaging, pip-tools, pynacl
+selenium==3.141.0         # via -r dev.in, pytest-selenium
+six==1.15.0               # via bcrypt, cryptography, django-extensions, packaging, pip-tools, pynacl
 sqlparse==0.3.1           # via -r main.txt, django
-tempora==3.0.0            # via portend
 toml==0.10.1              # via black
 typed-ast==1.4.1          # via black
 urllib3==1.25.9           # via requests, selenium
 wcwidth==0.2.5            # via prompt-toolkit, pytest
-zc.lockfile==2.0          # via cherrypy
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
