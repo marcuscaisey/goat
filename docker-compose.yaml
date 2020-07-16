@@ -4,46 +4,46 @@ services:
   traefik:
     image: traefik:v2.2.1
     command:
-    - "--accesslog=true"
-    - "--providers.docker=true"
-    - "--providers.docker.exposedbydefault=false"
-    - "--entrypoints.https.address=:443"
-    - "--entrypoints.https.http.tls.certresolver=tls-resolver"
-    - "--entrypoints.http.address=:80"
-    - "--entrypoints.http.http.redirections.entryPoint.to=https"
-    - "--certificatesresolvers.tls-resolver.acme.tlschallenge=true"
-    #    - "--certificatesresolvers.tls-resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-    - "--certificatesresolvers.tls-resolver.acme.email=$EMAIL"
-    - "--certificatesresolvers.tls-resolver.acme.storage=/letsencrypt/acme.json"
+      - "--accesslog=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.https.address=:443"
+      - "--entrypoints.https.http.tls.certresolver=tls-resolver"
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.http.http.redirections.entryPoint.to=https"
+      - "--certificatesresolvers.tls-resolver.acme.tlschallenge=true"
+      #    - "--certificatesresolvers.tls-resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.tls-resolver.acme.email=$EMAIL"
+      - "--certificatesresolvers.tls-resolver.acme.storage=/letsencrypt/acme.json"
     ports:
-    - "80:80"
-    - "443:443"
+      - "80:80"
+      - "443:443"
     volumes:
-    - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    - "/srv/app/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/srv/app/letsencrypt:/letsencrypt"
 
   app:
     build: .
     volumes:
-    - "/srv/app:/usr/src/app/data"
+      - "/srv/app:/usr/src/app/data"
     labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.app.entryPoints=https"
-    - "traefik.http.routers.app.rule=Host(`$DOMAIN`, `www.$DOMAIN`)"
-    - "traefik.http.routers.app.priority=1"
-    - "traefik.http.routers.app.middlewares=redirect-www"
-    - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\."
-    - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://"
-    - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.entryPoints=https"
+      - "traefik.http.routers.app.rule=Host(`$DOMAIN`, `www.$DOMAIN`)"
+      - "traefik.http.routers.app.priority=1"
+      - "traefik.http.routers.app.middlewares=redirect-www"
+      - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\."
+      - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://"
+      - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
 
   nginx:
     image: nginx:1.19.0
     volumes:
-    - "./nginx.conf:/etc/nginx/conf.d/app.conf:ro"
-    - "/srv/app/static:/srv/app/static:ro"
+      - "./nginx.conf:/etc/nginx/conf.d/app.conf:ro"
+      - "/srv/app/static:/srv/app/static:ro"
     labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.nginx.entryPoints=https"
-    - "traefik.http.routers.nginx.rule=Host(`$DOMAIN`) && PathPrefix(`/static/`)"
-    - "traefik.http.routers.nginx.priority=2"
-    - "traefik.http.services.nginx.loadbalancer.server.port=8000"
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.entryPoints=https"
+      - "traefik.http.routers.nginx.rule=Host(`$DOMAIN`) && PathPrefix(`/static/`)"
+      - "traefik.http.routers.nginx.priority=2"
+      - "traefik.http.services.nginx.loadbalancer.server.port=8000"
