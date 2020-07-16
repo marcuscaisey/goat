@@ -1,25 +1,31 @@
 repos:
-- repo: https://github.com/psf/black
-  rev: stable
-  hooks:
-  - id: black
-    types: [python]
-- repo: https://gitlab.com/pycqa/flake8
-  rev: 3.7.9
-  hooks:
-  - id: flake8
-    types: [python]
-- repo: https://github.com/timothycrosley/isort
-  rev: 4.3.21-2
-  hooks:
-  - id: isort
-    types: [python]
-- repo: https://github.com/asottile/seed-isort-config
-  rev: v2.1.1
-  hooks:
-  - id: seed-isort-config
-    types: [python]
-- repo: https://github.com/pre-commit/mirrors-eslint
-  rev: v7.4.0
-  hooks:
-  - id: eslint
+  - repo: https://github.com/psf/black
+    rev: stable
+    hooks:
+      - id: black
+        types: [python]
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.7.9
+    hooks:
+      - id: flake8
+        types: [python]
+  - repo: https://github.com/timothycrosley/isort
+    rev: 4.3.21-2
+    hooks:
+      - id: isort
+        types: [python]
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v2.1.1
+    hooks:
+      - id: seed-isort-config
+        types: [python]
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.4.0
+    hooks:
+      - id: eslint
+        additional_dependencies:
+          - eslint-config-prettier@6.11.0
+  - repo: https://github.com/prettier/prettier
+    rev: 2.0.5
+    hooks:
+      - id: prettier
