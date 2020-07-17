@@ -6,18 +6,17 @@ from lists.models import Item, List
 
 class TestViewList:
     @pytest.mark.django_db
-    def test_uses_list_template(self, client, assert_template_used):
-        list_ = List.objects.create()
-        response = client.get(f"/lists/{list_.pk}/")
+    def test_uses_list_template(self, client, list, assert_template_used):
+        response = client.get(f"/lists/{list.pk}/")
         assert_template_used(response, "lists/list.html")
 
     @pytest.mark.django_db
-    def test_displays_only_items_for_that_list(self, client):
-        correct_list = List.objects.create()
+    def test_displays_only_items_for_that_list(self, client, list_factory):
+        correct_list = list_factory()
         Item.objects.create(text="item 1", list=correct_list)
         Item.objects.create(text="item 2", list=correct_list)
 
-        other_list = List.objects.create()
+        other_list = list_factory()
         Item.objects.create(text="other item 1", list=other_list)
         Item.objects.create(text="other item 2", list=other_list)
 
@@ -29,43 +28,36 @@ class TestViewList:
         assert b"other item 2" not in response.content
 
     @pytest.mark.django_db
-    def test_passes_item_form_to_template(self, client):
-        list_ = List.objects.create()
-        response = client.get(f"/lists/{list_.pk}/")
+    def test_passes_item_form_to_template(self, client, list):
+        response = client.get(f"/lists/{list.pk}/")
         assert isinstance(response.context["form"], ItemForm)
 
     @pytest.mark.django_db
-    def test_passes_list_to_template(self, client):
-        list_ = List.objects.create()
-        response = client.get(f"/lists/{list_.pk}/")
-        assert response.context["list"] == list_
+    def test_passes_list_to_template(self, client, list):
+        response = client.get(f"/lists/{list.pk}/")
+        assert response.context["list"] == list
 
     @pytest.mark.django_db
-    def test_can_save_a_POST_request_to_an_existing_list(self, client):
-        list_ = List.objects.create()
-
-        client.post(f"/lists/{list_.pk}/", {"text": "A new list item"})
+    def test_can_save_a_POST_request_to_an_existing_list(self, client, list):
+        client.post(f"/lists/{list.pk}/", {"text": "A new list item"})
 
         saved_items = Item.objects
         assert saved_items.count() == 1
 
         saved_item = saved_items.first()
         assert saved_item.text == "A new list item"
-        assert saved_item.list == list_
+        assert saved_item.list == list
 
     @pytest.mark.django_db
-    def test_redirects_to_list_view(self, client, assert_redirects):
-        list_ = List.objects.create()
+    def test_redirects_to_list_view(self, client, list, assert_redirects):
+        response = client.post(f"/lists/{list.pk}/", {"text": "A new list item"})
 
-        response = client.post(f"/lists/{list_.pk}/", {"text": "A new list item"})
-
-        assert_redirects(response, f"/lists/{list_.pk}/")
+        assert_redirects(response, f"/lists/{list.pk}/")
 
     @pytest.fixture
-    def empty_input_response(self, client):
+    def empty_input_response(self, client, list):
         """Response to a POST request with invalid input."""
-        list_ = List.objects.create()
-        return client.post(f"/lists/{list_.pk}/", data={"text": ""})
+        return client.post(f"/lists/{list.pk}/", data={"text": ""})
 
     @pytest.mark.django_db
     def test_empty_input_renders_list_template(self, empty_input_response, assert_template_used):
@@ -85,11 +77,9 @@ class TestViewList:
         assert Item.objects.count() == 0
 
     @pytest.fixture
-    def duplicate_item_response(self, client):
+    def duplicate_item_response(self, client, item):
         """Response to a POST request with duplicate text input."""
-        list_ = List.objects.create()
-        Item.objects.create(text="item text", list=list_)
-        return client.post(f"/lists/{list_.pk}/", data={"text": "item text"})
+        return client.post(f"/lists/{item.list.pk}/", data={"text": item.text})
 
     @pytest.mark.django_db
     def test_duplicate_list_item_renders_list_template(self, duplicate_item_response, assert_template_used):
