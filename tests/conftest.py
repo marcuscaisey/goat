@@ -1,10 +1,11 @@
 import pytest
 import pytest_factoryboy
 
-from .factories import ItemFactory, ListFactory
+from .factories import ItemFactory, ListFactory, UserFactory
 
 pytest_factoryboy.register(ListFactory)
 pytest_factoryboy.register(ItemFactory)
+pytest_factoryboy.register(UserFactory)
 
 
 def pytest_addoption(parser):
