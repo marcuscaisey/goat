@@ -1,45 +1,16 @@
-{% load static %}
+{% extends "templates/base.html" %}
 {% load widget_tweaks %}
 
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{% static "lists/bulma.min.css" %}">
-  <script src="{% static "js/base.js" %}" defer></script>
-  <title>To-Do Lists</title>
-</head>
-
-<body>
-
-<div class="container mt-2">
-  <div class="columns is-centered">
-    <div class="column is-half">
-      <h1 class="title is-1 has-text-centered is-spaced">{% block header %}{% endblock %}</h1>
+{% block before-content %}
+  <form class="mb-2" method="post" action="{% block form-action %}{% endblock %}">
+    {% csrf_token %}
+    <div class="field">
+      <div class="control">
+        {{ form.text|add_class:"input" }}
+      </div>
+      {% if form.errors %}
+        <ul id="{{ form.text.id_for_label }}-error" class="help is-danger">{{ form.text.errors }}</ul>
+      {% endif %}
     </div>
-  </div>
-
-  <div class="columns is-centered">
-    <div class="column is-two-thirds">
-      <form class="mb-2" method="post" action="{% block form-action %}{% endblock %}">
-        {% csrf_token %}
-        <div class="field">
-          <div class="control">
-            {{ form.text|add_class:"input" }}
-          </div>
-          {% if form.errors %}
-            <ul id="{{ form.text.id_for_label }}-error" class="help is-danger">{{ form.text.errors }}</ul>
-          {% endif %}
-        </div>
-      </form>
-
-      {% block content %}{% endblock %}
-    </div>
-  </div>
-</div>
-
-</body>
-
-</html>
+  </form>
+{% endblock %}

@@ -6,7 +6,10 @@ from selenium.common import exceptions as selenium_exceptions
 
 @pytest.fixture(scope="session")
 def base_url(live_server, base_url):
-    return base_url if base_url else live_server.url
+    url = base_url if base_url else live_server.url
+    if not url.endswith("/"):
+        url += "/"
+    return url
 
 
 @pytest.fixture

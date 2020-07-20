@@ -26,4 +26,5 @@ class UserFactory(factory.DjangoModelFactory):
 
     @factory.post_generation
     def hash_password(obj, create, extracted, **kwargs):
+        obj.raw_password = obj.password
         obj.set_password(obj.password)

@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static "lists/bulma.min.css" %}">
+  <script src="{% static "js/base.js" %}" defer></script>
+  <title>To-Do Lists</title>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-menu has-shadow">
+      {% if request.user.is_authenticated %}
+        <div class="navbar-start">
+          <div class="navbar-item">
+            Logged in as&nbsp;<span id="logged-in-user" class="has-text-weight-bold">{{ request.user.email }}</span>
+          </div>
+        </div>
+      {% endif %}
+      <div class="navbar-end">
+        <div class="navbar-item">
+          {% if request.user.is_authenticated %}
+            <a class="button">Logout</a>
+          {% else %}
+            <a href="{% url "users:login" %}" class="button">Login</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-2">
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <h1 class="title is-1 has-text-centered is-spaced">{% block header %}{% endblock %}</h1>
+    </div>
+  </div>
+
+  <div class="columns is-centered">
+    <div class="column is-two-thirds">
+      {% block before-content %}{% endblock %}
+      {% block content %}{% endblock %}
+      {% block after-content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>

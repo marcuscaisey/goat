@@ -42,7 +42,7 @@ ROOT_URLCONF = "superlists.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [root("templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -92,3 +92,5 @@ SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", default=True)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 AUTH_USER_MODEL = "users.User"
+
+LOGIN_REDIRECT_URL = "home"
