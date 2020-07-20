@@ -1,5 +1,6 @@
 import pytest
-from django.contrib.auth.forms import AuthenticationForm
+
+from users.forms import AuthenticationForm
 
 
 class TestLoginView:

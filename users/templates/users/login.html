@@ -6,6 +6,10 @@
 {% endblock %}
 
 {% block content %}
+  {% for error in form.non_field_errors %}
+    <p class="notification is-danger is-light has-text-centered">{{ error }}</p>
+  {% endfor %}
+
   <form method="post">
     {% csrf_token %}
 
