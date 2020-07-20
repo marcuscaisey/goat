@@ -8,7 +8,7 @@ def test_can_log_in(selenium: webdriver.Firefox, base_url, user, wait_for):
     # not logged in
     selenium.get(base_url)
     with pytest.raises(selenium_exceptions.NoSuchElementException):
-        assert selenium.find_element_by_id("logged_in_user").text == user.email
+        selenium.find_element_by_id("logged_in_user")
 
     # They click the link to the login page
     selenium.find_element_by_link_text("Login").click()
@@ -44,3 +44,16 @@ def test_login_failure_shows_error_message(selenium: webdriver.Firefox, base_url
         selenium.find_element_by_css_selector(".notification.is-danger").text
         == "The email address and password provided do not match any of our records."
     )
+
+
+def test_can_log_out(selenium: webdriver.Firefox, base_url, user, wait_for, force_login):
+    # A user has logged themselves in and gone to the home page
+    force_login(user)
+    selenium.get(base_url)
+
+    # They now want to log out, so they click the link to logout
+    selenium.find_element_by_link_text("Logout").click()
+
+    # They're logged out and sent back to the home page
+    wait_for(lambda: selenium.find_element_by_link_text("Login"))
+    assert selenium.current_url == base_url

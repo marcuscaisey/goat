@@ -46,3 +46,27 @@ class TestLoginView:
     @pytest.mark.django_db
     def test_failure_to_login_passes_authentication_form_to_template(self, fail_response):
         assert isinstance(fail_response.context["form"], AuthenticationForm)
+
+
+class TestLogoutView:
+    @pytest.fixture
+    def response(self, client, user):
+        """Response to a logged in user logging out."""
+        client.force_login(user)
+        return client.get("/logout/")
+
+    @pytest.mark.django_db
+    def test_user_can_logout(self, response):
+        assert not response.wsgi_request.user.is_authenticated
+
+    @pytest.mark.django_db
+    def test_redirects_to_home_page(self, response, assert_redirects):
+        assert_redirects(response, "/")
+
+    @pytest.fixture
+    def logged_out_user_response(self, client):
+        """Response to a logged out user logging out."""
+        return client.get("/logout/")
+
+    def test_logged_out_user_redirects_to_home_page(self, logged_out_user_response, assert_redirects):
+        assert_redirects(logged_out_user_response, "/")

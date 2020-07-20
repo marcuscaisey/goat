@@ -1,6 +1,7 @@
 import time
 
 import pytest
+import seleniumlogin
 from selenium.common import exceptions as selenium_exceptions
 
 
@@ -71,3 +72,18 @@ def get_item_input(selenium):
         return selenium.find_element_by_id("id_text")
 
     return get_item_input
+
+
+@pytest.fixture
+def force_login(selenium, base_url):
+    """
+    Function which logs in a user to the current selenium browser session.
+
+    Args:
+        user (User): The user to log in.
+    """
+
+    def force_login(user):
+        seleniumlogin.force_login(user, selenium, base_url)
+
+    return force_login

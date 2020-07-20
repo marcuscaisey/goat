@@ -16,8 +16,9 @@ click==7.1.2              # via -r dev.in, black, pip-tools
 cryptography==2.9.2       # via paramiko
 django-environ==0.4.5     # via -r main.txt
 django-extensions==3.0.2  # via -r dev.in
+django-selenium-login==2.0.0  # via -r dev.in
 django-widget-tweaks==1.4.8  # via -r main.txt
-django==3.0.7             # via -r main.txt
+django==3.0.7             # via -r main.txt, django-selenium-login
 fabric==2.5.0             # via -r dev.in, patchwork
 factory-boy==2.12.0       # via -r dev.in, pytest-factoryboy
 faker==4.1.1              # via factory-boy
