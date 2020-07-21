@@ -16,5 +16,4 @@ pytest-instafail
 pytest-lazy-fixture==0.6.3
 pytest-picked
 pytest-selenium==1.17.0
-pytest-sugar
 python-dotenv==0.14.0
