@@ -16,11 +16,11 @@ def get_error_container(selenium):
 
 
 def test_cannot_add_empty_list_items(
-    selenium, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
+    selenium, home_url, wait_for, row_in_todo_table, get_item_input, get_error_container
 ):
     # Edith goes to the home page and accidentally tries to submit an empty list
     # item. She hints Enter on the empty input box
-    selenium.get(base_url)
+    selenium.get(home_url)
     get_item_input().send_keys(Keys.ENTER)
 
     # The home page refreshes and there is an error message saying that list
@@ -44,10 +44,10 @@ def test_cannot_add_empty_list_items(
 
 
 def test_cannot_add_duplicate_list_items(
-    selenium, base_url, get_item_input, wait_for, row_in_todo_table, get_error_container
+    selenium, home_url, get_item_input, wait_for, row_in_todo_table, get_error_container
 ):
     # Alice goes to the home page and enters a list item
-    selenium.get(base_url)
+    selenium.get(home_url)
     get_item_input().send_keys("Buy milk", Keys.ENTER)
     wait_for(row_in_todo_table, "1: Buy milk")
 
@@ -61,10 +61,10 @@ def test_cannot_add_duplicate_list_items(
 
 
 def test_error_messages_are_cleared_on_input(
-    selenium, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
+    selenium, home_url, wait_for, row_in_todo_table, get_item_input, get_error_container
 ):
     # Alice starts a list and causes a validation error
-    selenium.get(base_url)
+    selenium.get(home_url)
     get_item_input().send_keys("Buy milk", Keys.ENTER)
     wait_for(row_in_todo_table, "1: Buy milk")
     get_item_input().send_keys("Buy milk", Keys.ENTER)
@@ -78,10 +78,10 @@ def test_error_messages_are_cleared_on_input(
 
 
 def test_error_messages_are_cleared_when_input_clicked(
-    selenium, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
+    selenium, home_url, wait_for, row_in_todo_table, get_item_input, get_error_container
 ):
     # Alice starts a list and causes a validation error
-    selenium.get(base_url)
+    selenium.get(home_url)
     get_item_input().send_keys("Buy milk", Keys.ENTER)
     wait_for(row_in_todo_table, "1: Buy milk")
     get_item_input().send_keys("Buy milk", Keys.ENTER)

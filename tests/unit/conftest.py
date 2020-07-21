@@ -34,9 +34,3 @@ def assert_form_is_instance_with_errors():
         assert form.errors
 
     return assert_form_is_instance_with_errors
-
-
-@pytest.fixture
-def home_url():
-    """URL of the home page."""
-    return "/"

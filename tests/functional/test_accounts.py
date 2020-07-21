@@ -2,10 +2,10 @@ import pytest
 from selenium.common import exceptions as selenium_exceptions
 
 
-def test_can_log_in(selenium, base_url, user, wait_for):
+def test_can_log_in(selenium, home_url, user, wait_for):
     # A user who has an account goes to the home page, they can see that they're
     # not logged in
-    selenium.get(base_url)
+    selenium.get(home_url)
     with pytest.raises(selenium_exceptions.NoSuchElementException):
         selenium.find_element_by_id("logged_in_user")
 
@@ -21,13 +21,12 @@ def test_can_log_in(selenium, base_url, user, wait_for):
     wait_for(lambda: selenium.find_element_by_link_text("Logout"))
     with pytest.raises(selenium_exceptions.NoSuchElementException):
         selenium.find_element_by_link_text("Login")
-    assert selenium.current_url == base_url
+    assert selenium.current_url == home_url
     assert selenium.find_element_by_id("logged-in-user").text == user.email
 
 
-def test_login_failure_shows_error_message(selenium, base_url, user, wait_for):
+def test_login_failure_shows_error_message(selenium, login_url, user, wait_for):
     # A user goes to the login page
-    login_url = base_url + "login/"
     selenium.get(login_url)
 
     # They enter their password in incorrectly
@@ -45,14 +44,14 @@ def test_login_failure_shows_error_message(selenium, base_url, user, wait_for):
     )
 
 
-def test_can_log_out(selenium, base_url, user, wait_for, force_login):
+def test_can_log_out(selenium, home_url, user, wait_for, force_login):
     # A user has logged themselves in and gone to the home page
     force_login(user)
-    selenium.get(base_url)
+    selenium.get(home_url)
 
     # They now want to log out, so they click the link to logout
     selenium.find_element_by_link_text("Logout").click()
 
     # They're logged out and sent back to the home page
     wait_for(lambda: selenium.find_element_by_link_text("Login"))
-    assert selenium.current_url == base_url
+    assert selenium.current_url == home_url

@@ -5,11 +5,6 @@ from users.forms import AuthenticationForm
 
 class TestLoginView:
     @pytest.fixture
-    def login_url(self):
-        """URL of the login page."""
-        return "/login/"
-
-    @pytest.fixture
     def login_template(self):
         """Template that the login page uses."""
         return "users/login.html"
