@@ -2,6 +2,7 @@ import time
 
 import pytest
 import seleniumlogin
+from selenium import webdriver
 from selenium.common import exceptions as selenium_exceptions
 
 
@@ -87,3 +88,8 @@ def force_login(selenium, base_url):
         seleniumlogin.force_login(user, selenium, base_url)
 
     return force_login
+
+
+@pytest.fixture
+def selenium(selenium: webdriver.Firefox):
+    return selenium

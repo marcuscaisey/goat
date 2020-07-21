@@ -1,5 +1,4 @@
 import pytest
-from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 
@@ -45,7 +44,7 @@ def test_cannot_add_empty_list_items(
 
 
 def test_cannot_add_duplicate_list_items(
-    selenium: webdriver.Firefox, base_url, get_item_input, wait_for, row_in_todo_table, get_error_container
+    selenium, base_url, get_item_input, wait_for, row_in_todo_table, get_error_container
 ):
     # Alice goes to the home page and enters a list item
     selenium.get(base_url)
@@ -62,7 +61,7 @@ def test_cannot_add_duplicate_list_items(
 
 
 def test_error_messages_are_cleared_on_input(
-    selenium: webdriver.Firefox, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
+    selenium, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
 ):
     # Alice starts a list and causes a validation error
     selenium.get(base_url)
@@ -79,7 +78,7 @@ def test_error_messages_are_cleared_on_input(
 
 
 def test_error_messages_are_cleared_when_input_clicked(
-    selenium: webdriver.Firefox, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
+    selenium, base_url, wait_for, row_in_todo_table, get_item_input, get_error_container
 ):
     # Alice starts a list and causes a validation error
     selenium.get(base_url)

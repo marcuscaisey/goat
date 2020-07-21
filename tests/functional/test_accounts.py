@@ -1,9 +1,8 @@
 import pytest
-from selenium import webdriver
 from selenium.common import exceptions as selenium_exceptions
 
 
-def test_can_log_in(selenium: webdriver.Firefox, base_url, user, wait_for):
+def test_can_log_in(selenium, base_url, user, wait_for):
     # A user who has an account goes to the home page, they can see that they're
     # not logged in
     selenium.get(base_url)
@@ -26,7 +25,7 @@ def test_can_log_in(selenium: webdriver.Firefox, base_url, user, wait_for):
     assert selenium.find_element_by_id("logged-in-user").text == user.email
 
 
-def test_login_failure_shows_error_message(selenium: webdriver.Firefox, base_url, user, wait_for):
+def test_login_failure_shows_error_message(selenium, base_url, user, wait_for):
     # A user goes to the login page
     login_url = base_url + "login/"
     selenium.get(login_url)
@@ -46,7 +45,7 @@ def test_login_failure_shows_error_message(selenium: webdriver.Firefox, base_url
     )
 
 
-def test_can_log_out(selenium: webdriver.Firefox, base_url, user, wait_for, force_login):
+def test_can_log_out(selenium, base_url, user, wait_for, force_login):
     # A user has logged themselves in and gone to the home page
     force_login(user)
     selenium.get(base_url)
