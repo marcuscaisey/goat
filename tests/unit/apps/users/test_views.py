@@ -136,7 +136,7 @@ class TestSignupView:
     def fail_response(self, request, signup_url, client):
         """Response to a failed POST request to the signup view."""
         email, password = request.param
-        return client.post(signup_url, {"email": email, "password": password})
+        return client.post(signup_url, {"email": email, "password1": password, "password2": password})
 
     def test_failure_to_signup_renders_signup_template(self, fail_response, signup_template, assert_template_used):
         assert_template_used(fail_response, signup_template)
