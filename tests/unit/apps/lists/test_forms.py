@@ -52,9 +52,8 @@ class TestItemForm:
         assert isinstance(form.fields["text"].widget, forms.TextInput)
 
     @pytest.mark.django_db
-    def test_validation_error_for_duplicate_list_item(self, list):
-        Item.objects.create(text="item text", list=list)
-        form = ItemForm({"text": "item text"}, list_=list)
+    def test_validation_error_for_duplicate_list_item(self, item):
+        form = ItemForm({"text": item.text}, list_=item.list)
 
         assert not form.is_valid()
         assert form.errors["text"] == ["You can't save a duplicate item"]

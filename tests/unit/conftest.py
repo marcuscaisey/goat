@@ -20,3 +20,23 @@ def assert_redirects():
         return assertRedirects(response, url)
 
     return assert_redirects
+
+
+@pytest.fixture
+def assert_form_is_instance_with_errors():
+    """
+    Assert that a form is an instance of a specified type and that it has
+    errors.
+    """
+
+    def assert_form_is_instance_with_errors(form, type_):
+        assert isinstance(form, type_)
+        assert form.errors
+
+    return assert_form_is_instance_with_errors
+
+
+@pytest.fixture
+def home_url():
+    """URL of the home page."""
+    return "/"
