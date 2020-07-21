@@ -60,10 +60,13 @@ WSGI_APPLICATION = "superlists.wsgi.application"
 default_db_root = root if DEBUG else data
 DATABASES = {"default": env.db_url("DATABASE_URL", default=f"sqlite:///{default_db_root('db.sqlite3')}")}
 
+MIN_PASSWORD_LENGTH = 10
+
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": MIN_PASSWORD_LENGTH},
+    },
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 

@@ -55,3 +55,21 @@ def test_can_log_out(selenium, home_url, user, wait_for, force_login):
     # They're logged out and sent back to the home page
     wait_for(lambda: selenium.find_element_by_link_text("Login"))
     assert selenium.current_url == home_url
+
+
+def test_can_sign_up(selenium, home_url, login_url, wait_for, client, valid_email, valid_password):
+    # A user wants to create an account, so they go to the home page and click
+    # the Signup link
+    selenium.get(home_url)
+    selenium.find_element_by_link_text("Signup").click()
+
+    # They enter their email and password and click the Sign Up button
+    selenium.find_element_by_id("id_email").send_keys(valid_email)
+    selenium.find_element_by_id("id_password1").send_keys(valid_password)
+    selenium.find_element_by_id("id_password2").send_keys(valid_password)
+    selenium.find_element_by_css_selector("input[type=submit]").click()
+
+    # The user's account has now been created and they are redirected to the
+    # login page
+    wait_for(lambda: selenium.current_url == login_url)
+    assert client.login(username=valid_email, password=valid_password)
