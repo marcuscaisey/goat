@@ -10,9 +10,7 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
 
 
 class UserCreationForm(auth_forms.UserCreationForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.error_messages["password_mismatch"] = "This password doesn't match the one entered before."
+    error_messages = {"password_mismatch": "This password doesn't match the one entered before."}
 
     class Meta(auth_forms.UserCreationForm.Meta):
         model = User
