@@ -19,9 +19,16 @@
         <div class="control">
           {{ field|add_class:"input" }}
         </div>
-        <div class="help">
-          {{ field.help_text }}
-        </div>
+
+        {% if field.errors %}
+          <div class="help is-danger">
+            {{ field.errors }}
+          </div>
+        {% else %}
+          <div class="help">
+            {{ field.help_text }}
+          </div>
+        {% endif %}
       </div>
     {% endfor %}
 
