@@ -53,32 +53,3 @@ class TestLoginView:
         self, fail_response, assert_form_is_instance_with_errors
     ):
         assert_form_is_instance_with_errors(fail_response.context["form"], AuthenticationForm)
-
-
-class TestLogoutView:
-    @pytest.fixture
-    def logout_url(self):
-        """URL of the logout page."""
-        return "/logout/"
-
-    @pytest.fixture
-    def response(self, client, user, logout_url):
-        """Response to a logged in user logging out."""
-        client.force_login(user)
-        return client.get(logout_url)
-
-    @pytest.mark.django_db
-    def test_user_can_logout(self, response):
-        assert not response.wsgi_request.user.is_authenticated
-
-    @pytest.mark.django_db
-    def test_redirects_to_home_page(self, response, assert_redirects, home_url):
-        assert_redirects(response, home_url)
-
-    @pytest.fixture
-    def logged_out_user_response(self, client, logout_url):
-        """Response to a logged out user logging out."""
-        return client.get(logout_url)
-
-    def test_logged_out_user_redirects_to_home_page(self, logged_out_user_response, assert_redirects, home_url):
-        assert_redirects(logged_out_user_response, home_url)
