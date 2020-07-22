@@ -1,5 +1,6 @@
 import pytest
 from selenium.common import exceptions as selenium_exceptions
+from selenium.webdriver.common.keys import Keys
 
 
 def test_can_log_in(selenium, home_url, user, wait_for):
@@ -73,3 +74,66 @@ def test_can_sign_up(selenium, home_url, login_url, wait_for, client, valid_emai
     # login page
     wait_for(lambda: selenium.current_url == login_url)
     assert client.login(username=valid_email, password=valid_password)
+
+
+@pytest.fixture
+def fill_signup_with_valid_input(selenium, field, valid_email, valid_password):
+    def fill_signup_with_valid_input(exclude=()):
+        values = {"email": valid_email, "password1": valid_password, "password2": valid_password}
+        for name, value in values.items():
+            field(name).clear()
+            if name not in exclude:
+                field(name).send_keys(value)
+
+    return fill_signup_with_valid_input
+
+
+def test_signup_field_errors_show_error_messages(
+    selenium,
+    signup_url,
+    field,
+    field_error,
+    wait_for,
+    user,
+    invalid_email,
+    short_password,
+    numeric_password,
+    valid_password,
+    fill_signup_with_valid_input,
+):
+    # A user wants to create an account, so they go to the signup page
+    selenium.get(signup_url)
+
+    # They unluckily go through a series of invalid email and password
+    # combinations which result in error messages being shown below the invalid
+    # fields
+
+    # First they try an invalid email
+    fill_signup_with_valid_input(exclude=["email"])
+    field("email").send_keys(invalid_email, Keys.ENTER)
+    wait_for(lambda: selenium.find_element_by_css_selector("#id_email:invalid"))
+
+    # First they try and email that has already been used
+    fill_signup_with_valid_input(exclude=["email"])
+    field("email").send_keys(user.email, Keys.ENTER)
+    wait_for(lambda: field_error("email").text == "A user with this email address already exists.")
+
+    # Then they try entering a password which is too short
+    fill_signup_with_valid_input(exclude=["password1", "password2"])
+    field("password1").send_keys(short_password)
+    field("password2").send_keys(short_password, Keys.ENTER)
+    wait_for(
+        lambda: field_error("password2").text == "This password is too short. It must contain at least 10 characters."
+    )
+
+    # Then they try a password which is entirely numeric
+    fill_signup_with_valid_input(exclude=["password1", "password2"])
+    field("password1").send_keys(numeric_password)
+    field("password2").send_keys(numeric_password, Keys.ENTER)
+    wait_for(lambda: field_error("password2").text == "This password is entirely numeric.")
+
+    # Finally, they accidentally type different passwords into the fields
+    fill_signup_with_valid_input(exclude=["password1", "password2"])
+    field("password1").send_keys(valid_password)
+    field("password2").send_keys("incorrect" + valid_password, Keys.ENTER)
+    wait_for(lambda: field_error("password2").text == "This password doesn't match the one entered before.")

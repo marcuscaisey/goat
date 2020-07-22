@@ -21,13 +21,9 @@
         </div>
 
         {% if field.errors %}
-          <div class="help is-danger">
-            {{ field.errors }}
-          </div>
+          <ul id="{{ field.id_for_label }}-error" class="help is-danger">{{ field.errors }}</ul>
         {% else %}
-          <div class="help">
-            {{ field.help_text }}
-          </div>
+          <p class="help">{{ field.help_text }}</p>
         {% endif %}
       </div>
     {% endfor %}

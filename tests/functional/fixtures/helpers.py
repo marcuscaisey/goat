@@ -4,6 +4,7 @@ import pytest
 import seleniumlogin
 from selenium import webdriver
 from selenium.common import exceptions as selenium_exceptions
+from selenium.webdriver.remote import webelement
 
 
 @pytest.fixture
@@ -55,6 +56,26 @@ def wait_for():
                 time.sleep(wait_time)
 
     return wait_for
+
+
+@pytest.fixture
+def field(selenium):
+    """A function which returns a form field."""
+
+    def field(name) -> webelement.WebElement:
+        return selenium.find_element_by_id(f"id_{name}")
+
+    return field
+
+
+@pytest.fixture
+def field_error(selenium):
+    """A function which returns the error for a form field."""
+
+    def field_error(name) -> webelement.WebElement:
+        return selenium.find_element_by_id(f"id_{name}-error")
+
+    return field_error
 
 
 @pytest.fixture

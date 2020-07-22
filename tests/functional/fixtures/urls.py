@@ -16,3 +16,9 @@ def home_url(base_url, home_url):
 def login_url(base_url, login_url):
     """URL of the login page."""
     return base_url + login_url
+
+
+@pytest.fixture
+def signup_url(base_url):
+    """URL of the signup page."""
+    return base_url + "/signup/"
