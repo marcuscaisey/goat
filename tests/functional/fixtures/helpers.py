@@ -58,13 +58,19 @@ def wait_for():
 
 
 @pytest.fixture
-def get_item_input(selenium):
-    """A function which gets the item input element from the page."""
+def new_item_input_id():
+    """ID of the new item input."""
+    return "id_text"
 
-    def get_item_input():
-        return selenium.find_element_by_id("id_text")
 
-    return get_item_input
+@pytest.fixture
+def new_item_input(selenium, new_item_input_id):
+    """A function which gets the new item input from the page."""
+
+    def new_item_input():
+        return selenium.find_element_by_id(new_item_input_id)
+
+    return new_item_input
 
 
 @pytest.fixture

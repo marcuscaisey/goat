@@ -1,7 +1,8 @@
 import pytest
 from django import forms
+from django.db import models
 
-from lists.forms import ItemForm
+from lists.forms import ItemForm, PlaceholdersMixin
 from lists.models import Item, List
 
 
@@ -30,30 +31,26 @@ class TestItemForm:
         assert saved_item.text == "New item text"
         assert saved_item.list == list
 
-    def test_validation_error_for_blank_item(self):
-        form = ItemForm({"text": ""})
-
-        assert not form.is_valid()
-        assert form.errors["text"] == ["You can't save an empty list item"]
-
-    @pytest.mark.django_db
-    def test_validation_error_for_blank_item_with_existing_list(self, list):
-        form = ItemForm({"text": ""}, list_=list)
-
-        assert not form.is_valid()
-        assert form.errors["text"] == ["You can't save an empty list item"]
-
-    def test_text_field_has_placeholder(self):
-        form = ItemForm()
-        assert form.fields["text"].widget.attrs["placeholder"] == "Enter a to-do item"
-
-    def test_text_field_is_TextInput(self):
-        form = ItemForm()
-        assert isinstance(form.fields["text"].widget, forms.TextInput)
-
     @pytest.mark.django_db
     def test_validation_error_for_duplicate_list_item(self, item):
         form = ItemForm({"text": item.text}, list_=item.list)
 
         assert not form.is_valid()
         assert form.errors["text"] == ["You can't save a duplicate item"]
+
+
+def test_placeholders_mixin():
+    class Foo(models.Model):
+        bar = models.IntegerField()
+
+        class Meta:
+            app_label = "foo"
+
+    class FooForm(PlaceholdersMixin, forms.ModelForm):
+        class Meta:
+            model = Foo
+            fields = ("bar",)
+            placeholders = {"bar": "I am the placeholder for bar!"}
+
+    form = FooForm()
+    assert 'placeholder="I am the placeholder for bar!"' in str(form["bar"])
