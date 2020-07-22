@@ -3,7 +3,7 @@ from selenium.common import exceptions as selenium_exceptions
 from selenium.webdriver.common.keys import Keys
 
 
-def test_can_log_in(selenium, home_url, user, wait_for):
+def test_can_log_in(selenium, home_url, user, wait_for, field):
     # A user who has an account goes to the home page, they can see that they're
     # not logged in
     selenium.get(home_url)
@@ -14,9 +14,8 @@ def test_can_log_in(selenium, home_url, user, wait_for):
     selenium.find_element_by_link_text("Login").click()
 
     # They input their email and password and click login
-    selenium.find_element_by_id("id_username").send_keys(user.email)
-    selenium.find_element_by_id("id_password").send_keys(user.raw_password)
-    selenium.find_element_by_css_selector("input[type=submit]").click()
+    field("username").send_keys(user.email)
+    field("password").send_keys(user.raw_password, Keys.ENTER)
 
     # The user is now logged in and redirected back to the home page
     wait_for(lambda: selenium.find_element_by_link_text("Logout"))
