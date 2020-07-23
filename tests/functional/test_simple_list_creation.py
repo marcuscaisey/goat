@@ -3,13 +3,13 @@ import re
 from selenium.webdriver.common.keys import Keys
 
 
-def test_can_start_a_list_for_one_user(selenium, home_url, wait_for, row_in_todo_table, new_item_input):
+def test_can_start_a_list_for_one_user(browser, home_url, wait_for, row_in_todo_table, new_item_input):
     # Edith has heard about a cool new online to-do app. She goes to check out its homepage.
-    selenium.get(home_url)
+    browser.get(home_url)
 
     # She notices the page title and header mention to-do lists.
-    assert "To-Do" in selenium.title
-    header_text = selenium.find_element_by_tag_name("h1").text
+    assert "To-Do" in browser.title
+    header_text = browser.find_element_by_tag_name("h1").text
     assert "To-Do" in header_text
 
     # She is invited to enter a to-do item straight away.
@@ -40,19 +40,19 @@ def test_can_start_a_list_for_one_user(selenium, home_url, wait_for, row_in_todo
 
 
 def test_multiple_users_can_start_lists_at_different_urls(
-    selenium, home_url, wait_for, row_in_todo_table, new_item_input
+    browser, home_url, wait_for, row_in_todo_table, new_item_input
 ):
     lists_url_pattern = r"/lists/.+"
 
     # Edith start a new to-do list
-    selenium.get(home_url)
+    browser.get(home_url)
     input_ = new_item_input()
     input_.send_keys("Buy peacock feathers")
     input_.send_keys(Keys.ENTER)
     wait_for(row_in_todo_table, "1: Buy peacock feathers")
 
     # She notices that her list has a new URL
-    edith_list_url = selenium.current_url
+    edith_list_url = browser.current_url
     assert re.search(lists_url_pattern, edith_list_url)
 
     # Edith is done with her to-do list for now
@@ -60,8 +60,8 @@ def test_multiple_users_can_start_lists_at_different_urls(
     # Now a new user, Francis, comes along to the site
 
     # Francis visits the home page. There's no sign of Edith's list
-    selenium.get(home_url)
-    page_text = selenium.find_element_by_tag_name("body").text
+    browser.get(home_url)
+    page_text = browser.find_element_by_tag_name("body").text
     assert "Buy peacock feathers" not in page_text
 
     # Francis starts a new list by entering a new item. He is less interesting
@@ -72,12 +72,12 @@ def test_multiple_users_can_start_lists_at_different_urls(
     wait_for(row_in_todo_table, "1: Buy milk")
 
     # Francis gets his own unique URL
-    francis_list_url = selenium.current_url
+    francis_list_url = browser.current_url
     assert re.search(lists_url_pattern, francis_list_url)
     assert francis_list_url != edith_list_url
 
     # Again, there is no trace of Edith's list
-    page_text = selenium.find_element_by_tag_name("body").text
+    page_text = browser.find_element_by_tag_name("body").text
     assert "Buy peacock feathers" not in page_text
 
     # Francis is done for now as well

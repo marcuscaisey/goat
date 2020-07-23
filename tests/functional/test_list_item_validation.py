@@ -3,27 +3,27 @@ from selenium.webdriver.common.keys import Keys
 
 
 @pytest.fixture
-def new_item_error(selenium, new_item_input_id):
+def new_item_error(browser, new_item_input_id):
     """
     A function which gets the error element for the new item input from the
     page.
     """
 
     def new_item_error():
-        return selenium.find_element_by_id(f"{new_item_input_id}-error")
+        return browser.find_element_by_id(f"{new_item_input_id}-error")
 
     return new_item_error
 
 
-def test_cannot_add_empty_list_items(selenium, home_url, wait_for, row_in_todo_table, new_item_input, new_item_error):
+def test_cannot_add_empty_list_items(browser, home_url, wait_for, row_in_todo_table, new_item_input, new_item_error):
     # Edith goes to the home page and accidentally tries to submit an empty list
     # item. She hints Enter on the empty input box
-    selenium.get(home_url)
+    browser.get(home_url)
     new_item_input().send_keys(Keys.ENTER)
 
     # The home page refreshes and there is an error message saying that list
     # items cannot be blank
-    wait_for(lambda: selenium.find_element_by_css_selector("#id_text:invalid"))
+    wait_for(lambda: browser.find_element_by_css_selector("#id_text:invalid"))
 
     # She tries again with some text for the item, which now works
     new_item_input().send_keys("Buy milk", Keys.ENTER)
@@ -33,7 +33,7 @@ def test_cannot_add_empty_list_items(selenium, home_url, wait_for, row_in_todo_t
     new_item_input().send_keys(Keys.ENTER)
 
     # She receives a similar warning on the list page
-    wait_for(lambda: selenium.find_element_by_css_selector("#id_text:invalid"))
+    wait_for(lambda: browser.find_element_by_css_selector("#id_text:invalid"))
 
     # And she can correct it by filling some text in
     new_item_input().send_keys("Make tea", Keys.ENTER)
@@ -42,10 +42,10 @@ def test_cannot_add_empty_list_items(selenium, home_url, wait_for, row_in_todo_t
 
 
 def test_cannot_add_duplicate_list_items(
-    selenium, home_url, new_item_input, wait_for, row_in_todo_table, new_item_error
+    browser, home_url, new_item_input, wait_for, row_in_todo_table, new_item_error
 ):
     # Alice goes to the home page and enters a list item
-    selenium.get(home_url)
+    browser.get(home_url)
     new_item_input().send_keys("Buy milk", Keys.ENTER)
     wait_for(row_in_todo_table, "1: Buy milk")
 
@@ -59,10 +59,10 @@ def test_cannot_add_duplicate_list_items(
 
 
 def test_error_messages_are_cleared_on_input(
-    selenium, home_url, wait_for, row_in_todo_table, new_item_input, new_item_error
+    browser, home_url, wait_for, row_in_todo_table, new_item_input, new_item_error
 ):
     # Alice starts a list and causes a validation error
-    selenium.get(home_url)
+    browser.get(home_url)
     new_item_input().send_keys("Buy milk", Keys.ENTER)
     wait_for(row_in_todo_table, "1: Buy milk")
     new_item_input().send_keys("Buy milk", Keys.ENTER)
@@ -76,10 +76,10 @@ def test_error_messages_are_cleared_on_input(
 
 
 def test_error_messages_are_cleared_when_input_clicked(
-    selenium, home_url, wait_for, row_in_todo_table, new_item_input, new_item_error
+    browser, home_url, wait_for, row_in_todo_table, new_item_input, new_item_error
 ):
     # Alice starts a list and causes a validation error
-    selenium.get(home_url)
+    browser.get(home_url)
     new_item_input().send_keys("Buy milk", Keys.ENTER)
     wait_for(row_in_todo_table, "1: Buy milk")
     new_item_input().send_keys("Buy milk", Keys.ENTER)

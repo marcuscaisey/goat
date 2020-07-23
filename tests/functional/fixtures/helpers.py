@@ -8,14 +8,14 @@ from selenium.webdriver.remote import webelement
 
 
 @pytest.fixture
-def row_in_todo_table(selenium):
+def row_in_todo_table(browser):
     """
     A function which returns if a row with the given text is in the to-do list
     table.
     """
 
     def row_in_todo_table(text):
-        table = selenium.find_element_by_id("to-do_items")
+        table = browser.find_element_by_id("to-do_items")
         rows = table.find_elements_by_tag_name("tr")
         return text in [row.text for row in rows]
 
@@ -59,21 +59,21 @@ def wait_for():
 
 
 @pytest.fixture
-def field(selenium):
+def field(browser):
     """A function which returns a form field."""
 
     def field(name) -> webelement.WebElement:
-        return selenium.find_element_by_id(f"id_{name}")
+        return browser.find_element_by_id(f"id_{name}")
 
     return field
 
 
 @pytest.fixture
-def field_error(selenium):
+def field_error(browser):
     """A function which returns the error for a form field."""
 
     def field_error(name) -> webelement.WebElement:
-        return selenium.find_element_by_id(f"id_{name}-error")
+        return browser.find_element_by_id(f"id_{name}-error")
 
     return field_error
 
@@ -85,17 +85,17 @@ def new_item_input_id():
 
 
 @pytest.fixture
-def new_item_input(selenium, new_item_input_id):
+def new_item_input(browser, new_item_input_id):
     """A function which gets the new item input from the page."""
 
     def new_item_input():
-        return selenium.find_element_by_id(new_item_input_id)
+        return browser.find_element_by_id(new_item_input_id)
 
     return new_item_input
 
 
 @pytest.fixture
-def force_login(selenium, base_url):
+def force_login(browser, base_url):
     """
     Function which logs in a user to the current selenium browser session.
 
@@ -104,11 +104,11 @@ def force_login(selenium, base_url):
     """
 
     def force_login(user):
-        seleniumlogin.force_login(user, selenium, base_url)
+        seleniumlogin.force_login(user, browser, base_url)
 
     return force_login
 
 
 @pytest.fixture
-def selenium(selenium: webdriver.Firefox):
+def browser(selenium: webdriver.Firefox) -> webdriver.Firefox:
     return selenium
