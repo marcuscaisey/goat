@@ -4,18 +4,24 @@ import pytest
 import seleniumlogin
 from selenium import webdriver
 from selenium.common import exceptions as selenium_exceptions
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote import webelement
 
 
 @pytest.fixture
-def row_in_todo_table(browser):
+def to_do_table_id():
+    return "to-do_items"
+
+
+@pytest.fixture
+def row_in_todo_table(browser, to_do_table_id):
     """
     A function which returns if a row with the given text is in the to-do list
     table.
     """
 
     def row_in_todo_table(text):
-        table = browser.find_element_by_id("to-do_items")
+        table = browser.find_element_by_id(to_do_table_id)
         rows = table.find_elements_by_tag_name("tr")
         return text in [row.text for row in rows]
 
@@ -112,3 +118,15 @@ def force_login(browser, base_url):
 @pytest.fixture
 def browser(selenium: webdriver.Firefox) -> webdriver.Firefox:
     return selenium
+
+
+@pytest.fixture
+def add_list_item(browser, wait_for, row_in_todo_table, field, to_do_table_id):
+    """Add an item to the list on the current page."""
+
+    def add_list_item(text):
+        rows = len(browser.find_elements_by_css_selector(f"#{to_do_table_id} tr"))
+        field("text").send_keys(text, Keys.ENTER)
+        wait_for(row_in_todo_table, f"{rows + 1}: {text}")
+
+    return add_list_item
