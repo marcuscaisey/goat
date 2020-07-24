@@ -36,7 +36,7 @@ class ItemForm(PlaceholdersMixin, forms.ModelForm):
         """
         Create a list if the internal instance doesn't already have one set.
         """
-        if not hasattr(self.instance, "list"):
+        if self.instance.list_id is None:
             self.instance.list = List.objects.create()
         return super().save(commit=commit)
 
@@ -46,9 +46,9 @@ class ItemForm(PlaceholdersMixin, forms.ModelForm):
         internal instance has a list set.
         """
         if (
-            hasattr(self.instance, "list")
-            and Item.objects.filter(text=self.cleaned_data["text"], list=self.instance.list).exists()
+            self.instance.list_id is None
+            or not Item.objects.filter(text=self.cleaned_data["text"], list=self.instance.list).exists()
         ):
-            self._update_errors(ValidationError({"text": ValidationError("Text is not unique", code="unique")}))
-        else:
             return self.cleaned_data["text"]
+        else:
+            self._update_errors(ValidationError({"text": ValidationError("Text is not unique", code="unique")}))
