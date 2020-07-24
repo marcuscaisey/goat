@@ -159,3 +159,24 @@ class TestNewList:
 
     def test_invalid_form_passes_form_to_template(self, invalid_form_response, mock_item_form_instance):
         assert invalid_form_response.context["form"] == mock_item_form_instance
+
+    @pytest.mark.django_db
+    def test_list_owner_is_saved_if_user_is_authenticated(self, client, user, new_list_url):
+        client.force_login(user)
+        client.post(new_list_url, {"text": "new list item"})
+        assert List.objects.first().owner == user
+
+
+class TestMyLists:
+    @pytest.fixture
+    def get_response(self, client, user):
+        """Response to a GET request for a user's lists."""
+        return client.get(f"/lists/users/{user.email}/")
+
+    @pytest.mark.django_db
+    def test_my_lists_url_renders_my_lists_template(self, get_response, assert_template_used):
+        assert_template_used(get_response, "lists/my_lists.html")
+
+    @pytest.mark.django_db
+    def test_passes_owner_to_template(self, get_response, user):
+        assert get_response.context["owner"] == user

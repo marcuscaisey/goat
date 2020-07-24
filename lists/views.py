@@ -1,5 +1,7 @@
 from django.shortcuts import redirect, render
 
+from users.models import User
+
 from .forms import ItemForm
 from .models import List
 
@@ -25,7 +27,16 @@ def home_page(request):
 def new_list(request):
     form = ItemForm(request.POST)
     if form.is_valid():
-        item = form.save()
+        item = form.save(commit=False)
+        if request.user.is_authenticated:
+            item.list.owner = request.user
+        item.list.save()
+        item.save()
         return redirect(item.list)
     else:
         return render(request, "lists/home.html", {"form": form})
+
+
+def my_lists(request, email):
+    owner = User.objects.get(email=email)
+    return render(request, "lists/my_lists.html", {"owner": owner})

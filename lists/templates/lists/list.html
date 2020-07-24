@@ -10,7 +10,7 @@
 
 {% block content %}
   <table class="table is-striped is-fullwidth" id="to-do_items">
-    {% for item in list.item_set.all %}
+    {% for item in list.items.all %}
       <tr>
         <td><strong>{{ forloop.counter }}:</strong> {{ item.text }}</td>
       </tr>
