@@ -52,3 +52,11 @@ class ItemForm(PlaceholdersMixin, forms.ModelForm):
             return self.cleaned_data["text"]
         else:
             self._update_errors(ValidationError({"text": ValidationError("Text is not unique", code="unique")}))
+
+
+class NewListForm(ItemForm):
+    def save(self, owner):
+        if owner.is_authenticated:
+            return List.create_new(first_item_text=self.cleaned_data["text"], owner=owner)
+        else:
+            return List.create_new(first_item_text=self.cleaned_data["text"])
