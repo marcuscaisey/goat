@@ -1,7 +1,10 @@
+from unittest import mock
+
 import pytest
 
 from lists.forms import ItemForm
 from lists.models import Item, List
+from lists.views import new_list
 
 
 @pytest.fixture
@@ -117,54 +120,102 @@ class TestHome:
         assert Item.objects.count() == 0
 
 
-class TestNewList:
-    @pytest.fixture
-    def new_list_url(self):
-        """URL of the new list view."""
-        return "/lists/new/"
+@pytest.fixture
+def new_list_url():
+    """URL of the new list view."""
+    return "/lists/new/"
 
-    @pytest.fixture
-    def success_response(self, new_list_url, client):
-        """Response to a successful POST request to the new list view."""
-        return client.post(new_list_url, data={"text": "A new list item"})
 
-    @pytest.mark.django_db
-    def test_can_save_POST_request(self, success_response):
-        items = Item.objects.all()
-        assert items.count() == 1
-        assert items.first().text == "A new list item"
+@pytest.mark.django_db
+class TestNewListIntegrated:
+    def test_can_save_POST_request(self, client, new_list_url):
+        client.post(new_list_url, data={"text": "A new list item"})
+        assert Item.objects.count() == 1
+        assert List.objects.count() == 1
+        saved_item = Item.objects.first()
+        saved_list = List.objects.first()
+        assert saved_item.text == "A new list item"
+        assert saved_item.list == saved_list
 
-    @pytest.mark.django_db
-    def test_redirects_after_POST(self, success_response, assert_redirects, view_list_url_factory):
-        list_ = List.objects.first()
-        assert_redirects(success_response, view_list_url_factory(list_))
+    def test_invalid_list_items_arent_saved(self, client, new_list_url):
+        client.post(new_list_url, {"text": ""})
+        assert Item.objects.count() == 0
+        assert List.objects.count() == 0
 
-    @pytest.fixture
-    def invalid_form_response(self, client, new_list_url, mock_item_form_instance):
-        """
-        A response to a POST request to the new list view with invalid input.
-        """
-        mock_item_form_instance.is_valid.return_value = False
-        return client.post(new_list_url, {"text": "A new list item."})
-
-    def test_invalid_form_called_with_data(self, invalid_form_response, mock_item_form):
-        mock_item_form.assert_called_with(invalid_form_response.wsgi_request.POST)
-
-    def test_invalid_form_doesnt_save(self, invalid_form_response, mock_item_form_instance):
-        mock_item_form_instance.save.assert_not_called()
-
-    def test_invalid_form_renders_home_template(self, invalid_form_response, assert_template_used, home_template):
-        assert invalid_form_response.status_code == 200
-        assert_template_used(invalid_form_response, home_template)
-
-    def test_invalid_form_passes_form_to_template(self, invalid_form_response, mock_item_form_instance):
-        assert invalid_form_response.context["form"] == mock_item_form_instance
-
-    @pytest.mark.django_db
     def test_list_owner_is_saved_if_user_is_authenticated(self, client, user, new_list_url):
         client.force_login(user)
         client.post(new_list_url, {"text": "new list item"})
         assert List.objects.first().owner == user
+
+
+class TestNewListUnit:
+    @pytest.fixture
+    def mock_NewListForm(self, mocker):
+        """A mock NewListForm class."""
+        return mocker.patch("lists.views.NewListForm")
+
+    @pytest.fixture
+    def mock_redirect(self, mocker):
+        """A mock redirect."""
+        return mocker.patch("lists.views.redirect")
+
+    @pytest.fixture
+    def mock_render(self, mocker):
+        """A mock render."""
+        return mocker.patch("lists.views.render")
+
+    @pytest.fixture
+    def mock_form(self, mock_NewListForm):
+        """A mock NewListForm instance."""
+        return mock_NewListForm.return_value
+
+    @pytest.fixture
+    def post_request(self, new_list_url, rf, mock_redirect):
+        """A POST request to the new list view."""
+        request = rf.post(new_list_url, {"text": "new item text"})
+        request.user = mock.Mock()
+        return request
+
+    @pytest.fixture
+    def form_valid_request(self, post_request, mock_form):
+        """A POST request to the new list view where the form is valid."""
+        mock_form.is_valid.return_value = True
+        return post_request
+
+    def test_passes_POST_data_to_NewListForm(self, post_request, mock_NewListForm):
+        new_list(post_request)
+
+        mock_NewListForm.assert_called_once_with(data=post_request.POST)
+
+    def test_saves_form_with_owner_if_form_valid(self, form_valid_request, mock_form):
+        new_list(form_valid_request)
+
+        mock_form.save.assert_called_once_with(owner=form_valid_request.user)
+
+    def test_redirects_to_form_returned_object_if_form_valid(self, post_request, mock_form, mock_redirect):
+        response = new_list(post_request)
+
+        assert response == mock_redirect.return_value
+        mock_redirect.assert_called_once_with(mock_form.save.return_value)
+
+    @pytest.fixture
+    def form_invalid_request(self, post_request, mock_form):
+        """A POST request to the new list view where the form is valid."""
+        mock_form.is_valid.return_value = False
+        return post_request
+
+    def test_does_not_save_if_form_invalid(self, form_invalid_request, mock_form):
+        new_list(form_invalid_request)
+
+        mock_form.save.assert_not_called()
+
+    def test_renders_home_template_with_form_if_form_invalid(
+        self, form_invalid_request, mock_render, home_template, mock_form
+    ):
+        response = new_list(form_invalid_request)
+
+        assert response == mock_render.return_value
+        mock_render.assert_called_once_with(form_invalid_request, home_template, {"form": mock_form})
 
 
 class TestMyLists:

@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 
 from users.models import User
 
-from .forms import ItemForm
+from .forms import ItemForm, NewListForm
 from .models import List
 
 
@@ -25,16 +25,11 @@ def home_page(request):
 
 
 def new_list(request):
-    form = ItemForm(request.POST)
+    form = NewListForm(data=request.POST)
     if form.is_valid():
-        item = form.save(commit=False)
-        if request.user.is_authenticated:
-            item.list.owner = request.user
-        item.list.save()
-        item.save()
-        return redirect(item.list)
-    else:
-        return render(request, "lists/home.html", {"form": form})
+        list_ = form.save(owner=request.user)
+        return redirect(list_)
+    return render(request, "lists/home.html", {"form": form})
 
 
 def my_lists(request, email):

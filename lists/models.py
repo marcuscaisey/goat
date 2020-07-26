@@ -5,10 +5,16 @@ from users.models import User
 
 
 class List(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="lists")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="lists")
 
     def get_absolute_url(self):
         return reverse("lists:view-list", args=(self.pk,))
+
+    @staticmethod
+    def create_new(first_item_text, owner=None):
+        list_ = List.objects.create(owner=owner)
+        Item.objects.create(text=first_item_text, list=list_)
+        return list_
 
     @property
     def name(self):
