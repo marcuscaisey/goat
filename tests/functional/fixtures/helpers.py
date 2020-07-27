@@ -109,8 +109,10 @@ def force_login(browser, base_url):
         user (User): The user to log in.
     """
 
-    def force_login(user):
+    def force_login(user, target_url=None):
         seleniumlogin.force_login(user, browser, base_url)
+        if target_url is not None:
+            browser.get(target_url)
 
     return force_login
 
