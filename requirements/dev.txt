@@ -5,24 +5,24 @@
 #    pip-compile --output-file=dev.txt dev.in
 #
 appdirs==1.4.4            # via black, ptpython
-asgiref==3.2.10           # via -r main.txt, django
+asgiref==3.2.10           # via -r requirements/main.txt, django
 attrs==19.3.0             # via black, pytest
 bcrypt==3.1.7             # via paramiko
-black==19.10b0            # via -r dev.in
+black==19.10b0            # via -r requirements/dev.in
 certifi==2020.6.20        # via requests
 cffi==1.14.0              # via bcrypt, cryptography, pynacl
 chardet==3.0.4            # via requests
-click==7.1.2              # via -r dev.in, black, pip-tools
+click==7.1.2              # via -r requirements/dev.in, black, pip-tools
 cryptography==2.9.2       # via paramiko
-django-environ==0.4.5     # via -r main.txt
-django-extensions==3.0.2  # via -r dev.in
-django-selenium-login==2.0.0  # via -r dev.in
-django-widget-tweaks==1.4.8  # via -r main.txt
-django==3.0.7             # via -r main.txt, django-selenium-login
-fabric==2.5.0             # via -r dev.in, patchwork
-factory-boy==2.12.0       # via -r dev.in, pytest-factoryboy
+django-environ==0.4.5     # via -r requirements/main.txt
+django-extensions==3.0.2  # via -r requirements/dev.in
+django-selenium-login==2.0.0  # via -r requirements/dev.in
+django-widget-tweaks==1.4.8  # via -r requirements/main.txt
+django==3.0.7             # via -r requirements/main.txt, django-selenium-login
+fabric==2.5.0             # via -r requirements/dev.in, patchwork
+factory-boy==2.12.0       # via -r requirements/dev.in, pytest-factoryboy
 faker==4.1.1              # via factory-boy
-gunicorn==20.0.4          # via -r main.txt
+gunicorn==20.0.4          # via -r requirements/main.txt
 idna==2.10                # via requests
 inflection==0.5.0         # via pytest-factoryboy
 invoke==1.4.1             # via fabric
@@ -31,36 +31,36 @@ more-itertools==8.4.0     # via pytest
 packaging==20.4           # via pytest
 paramiko==2.7.1           # via fabric
 parso==0.7.0              # via jedi
-patchwork==1.0.1          # via -r dev.in
+patchwork==1.0.1          # via -r requirements/dev.in
 pathspec==0.8.0           # via black
-pip-tools==5.2.1          # via -r dev.in
+pip-tools==5.3.0          # via -r requirements/dev.in
 pluggy==0.13.1            # via pytest
 prompt-toolkit==3.0.5     # via ptpython
-ptpython==3.0.2           # via -r dev.in
+ptpython==3.0.2           # via -r requirements/dev.in
 py==1.8.2                 # via pytest
 pycparser==2.20           # via cffi
 pygments==2.6.1           # via ptpython
 pynacl==1.4.0             # via paramiko
 pyparsing==2.4.7          # via packaging
 pytest-base-url==1.4.2    # via pytest-selenium
-pytest-django==3.9.0      # via -r dev.in
-pytest-factoryboy==2.0.3  # via -r dev.in
+pytest-django==3.9.0      # via -r requirements/dev.in
+pytest-factoryboy==2.0.3  # via -r requirements/dev.in
 pytest-html==2.1.1        # via pytest-selenium
-pytest-lazy-fixture==0.6.3  # via -r dev.in
+pytest-lazy-fixture==0.6.3  # via -r requirements/dev.in
 pytest-metadata==1.10.0   # via pytest-html
-pytest-mock==3.2.0        # via -r dev.in
-pytest-picked==0.4.4      # via -r dev.in
-pytest-selenium==1.17.0   # via -r dev.in
+pytest-mock==3.2.0        # via -r requirements/dev.in
+pytest-picked==0.4.4      # via -r requirements/dev.in
+pytest-selenium==1.17.0   # via -r requirements/dev.in
 pytest-variables==1.9.0   # via pytest-selenium
-pytest==5.4.3             # via -r dev.in, pytest-base-url, pytest-django, pytest-factoryboy, pytest-html, pytest-lazy-fixture, pytest-metadata, pytest-mock, pytest-picked, pytest-selenium, pytest-variables
+pytest==5.4.3             # via -r requirements/dev.in, pytest-base-url, pytest-django, pytest-factoryboy, pytest-html, pytest-lazy-fixture, pytest-metadata, pytest-mock, pytest-picked, pytest-selenium, pytest-variables
 python-dateutil==2.8.1    # via faker
-python-dotenv==0.14.0     # via -r dev.in
-pytz==2020.1              # via -r main.txt, django
+python-dotenv==0.14.0     # via -r requirements/dev.in
+pytz==2020.1              # via -r requirements/main.txt, django
 regex==2020.6.8           # via black
 requests==2.24.0          # via pytest-base-url, pytest-selenium
-selenium==3.141.0         # via -r dev.in, pytest-selenium
+selenium==3.141.0         # via -r requirements/dev.in, pytest-selenium
 six==1.15.0               # via bcrypt, cryptography, django-extensions, packaging, pip-tools, pynacl, python-dateutil
-sqlparse==0.3.1           # via -r main.txt, django
+sqlparse==0.3.1           # via -r requirements/main.txt, django
 text-unidecode==1.3       # via faker
 toml==0.10.1              # via black
 typed-ast==1.4.1          # via black
