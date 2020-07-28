@@ -31,3 +31,15 @@ class TestList:
 
     def test_name_is_first_item_text(self, item):
         assert item.list.name == item.text
+
+
+@pytest.mark.django_db
+class TestListManager:
+    def test_share_list_adds_user_to_shared_with(self, list, user):
+        List.objects.share_list(user.email, list.pk)
+
+        assert list.shared_with.count() == 1
+        assert list.shared_with.first() == user
+
+    def test_share_list_returns_shared_list(self, list, user):
+        assert List.objects.share_list(user.email, list.pk) == list

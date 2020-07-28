@@ -1,6 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+from users.models import User
+
 from .models import Item, List
 
 
@@ -60,3 +62,29 @@ class NewListForm(ItemForm):
             return List.create_new(first_item_text=self.cleaned_data["text"], owner=owner)
         else:
             return List.create_new(first_item_text=self.cleaned_data["text"])
+
+
+class ShareListForm(PlaceholdersMixin, forms.Form):
+    sharee = forms.CharField()
+
+    class Meta:
+        placeholders = {"sharee": "your-friend@example.com"}
+
+    def __init__(self, *args, list_id=None, sharer=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._list_id = list_id
+        self._sharer = sharer
+
+    def save(self):
+        return List.objects.share_list(sharee=self.cleaned_data["sharee"], list_id=self._list_id)
+
+    @property
+    def list(self):
+        return List.objects.get(pk=self._list_id)
+
+    def clean_sharee(self):
+        if not User.objects.exists_with_email(self.cleaned_data["sharee"]):
+            raise ValidationError("This user doesn't have an account.", code="no_account")
+        elif self.cleaned_data["sharee"] == self._sharer.email:
+            raise ValidationError("You already own this list.", code="sharer_owns_list")
+        return self.cleaned_data["sharee"]

@@ -1,4 +1,5 @@
 {% extends "lists/base.html" %}
+{% load widget_tweaks %}
 
 {% block header %}
   Your To-Do List
@@ -16,4 +17,37 @@
       </tr>
     {% endfor %}
   </table>
+{% endblock %}
+
+{% block after-content %}
+  <div class="columns">
+    <div class="column is-half">
+      {% if list.owner %}
+        <span class="label">Shared with</span>
+        <ul>
+          <li id="list-owner">{{ list.owner }}</li>
+          {% for user in list.shared_with.all %}
+            <li class="list-sharee">{{ user.email }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <div class="column is-half">
+      {% if list.owner == user %}
+        <form action="{% url "lists:share-list" list.pk %}" method="post">
+          {% csrf_token %}
+          <div class="field">
+            <label for="{{ share_form.sharee.id_for_label }}" class="label">Share this list</label>
+            <div class="control">
+              {{ share_form.sharee|add_class:"input" }}
+            </div>
+            {% if share_form.errors.sharee %}
+              <ul id="{{ share_form.sharee.id_for_label }}-error" class="help is-danger">{{ share_form.sharee.errors }}</ul>
+            {% endif %}
+          </div>
+        </form>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

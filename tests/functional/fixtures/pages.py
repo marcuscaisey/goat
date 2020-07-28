@@ -69,15 +69,19 @@ class ListPage(Page):
 
     @property
     def share_box(self):
-        return self.browser.find_element_by_css_selector("input[name=sharee]")
+        return self.browser.find_element_by_id("id_sharee")
+
+    @property
+    def share_box_error(self):
+        return self.browser.find_element_by_id("id_sharee-error").text
 
     @property
     def shared_with_list(self):
-        return self.browser.find_elements_by_css_selector(".list-sharee")
+        return [item.text for item in self.browser.find_elements_by_css_selector(".list-sharee")]
 
     def share_list_with(self, email):
         self.share_box.send_keys(email, Keys.ENTER)
-        _wait_for(lambda: email in [item.text for item in self.shared_with_list])
+        _wait_for(lambda: email in self.shared_with_list)
         return self
 
     @property
@@ -86,8 +90,8 @@ class ListPage(Page):
 
 
 class MyListsPage(Page):
-    def got_to_my_lists_page(self):
+    def go_to_my_lists_page(self):
         self.browser.get(self.base_url)
         self.browser.find_element_by_link_text("My lists").click()
-        _wait_for(lambda: self.browser.find_element_by_tag_name("h1").text == "My lists")
+        _wait_for(lambda: self.browser.find_element_by_tag_name("h1").text == "My Lists")
         return self

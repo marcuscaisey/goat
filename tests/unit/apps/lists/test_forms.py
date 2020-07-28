@@ -2,8 +2,9 @@ import pytest
 from django import forms
 from django.db import models
 
-from lists.forms import ItemForm, NewListForm, PlaceholdersMixin
+from lists.forms import ItemForm, NewListForm, PlaceholdersMixin, ShareListForm
 from lists.models import Item, List
+from users.models import User
 
 
 class TestItemForm:
@@ -92,3 +93,60 @@ class TestNewListForm:
         list_ = form.save(owner=mock_user)
 
         assert list_ == mock_List_create_new.return_value
+
+
+class TestShareListForm:
+    @pytest.fixture
+    def mock_List_objects_share_list(self, mocker):
+        """A mock List.objects.share_list."""
+        return mocker.patch("lists.forms.List.objects.share_list", autospec=True)
+
+    @pytest.fixture
+    def mock_user(self, mocker):
+        return mocker.Mock(User)
+
+    @pytest.fixture
+    def form(self, mock_user):
+        """A ShareListForm instance."""
+        return ShareListForm(data={"sharee": "john.smith@gmail.com"}, list_id=1, sharer=mock_user)
+
+    @pytest.fixture
+    def mock_User_objects_exists_with_email(self, mocker):
+        """A mock User.objects.exists_with_email."""
+        return mocker.patch("lists.forms.User.objects.exists_with_email", autospec=True)
+
+    @pytest.fixture
+    def mock_List_objects_get(self, mocker):
+        """A mock List.objects.get."""
+        return mocker.patch("lists.forms.List.objects.get", autospec=True)
+
+    def test_save_shares_list_with_sharee(
+        self, form, mock_List_objects_share_list, mock_User_objects_exists_with_email
+    ):
+        mock_User_objects_exists_with_email.return_value = True
+        form.is_valid()
+
+        form.save()
+
+        mock_List_objects_share_list.assert_called_once_with(sharee="john.smith@gmail.com", list_id=1)
+
+    def test_save_returns_list(self, form, mock_List_objects_share_list, mock_User_objects_exists_with_email):
+        mock_User_objects_exists_with_email.return_value = True
+        form.is_valid()
+
+        assert form.save() == mock_List_objects_share_list.return_value
+
+    def test_list_returns_list_object(self, form, mock_List_objects_get):
+        assert form.list == mock_List_objects_get.return_value
+        mock_List_objects_get.assert_called_once_with(pk=1)
+
+    def test_sharee_has_error_if_user_with_email_doesnt_exist(self, form, mock_User_objects_exists_with_email):
+        mock_User_objects_exists_with_email.return_value = False
+
+        assert "This user doesn't have an account." in form.errors["sharee"]
+
+    def test_sharee_has_error_if_sharee_is_same_as_sharer(self, form, mock_user, mock_User_objects_exists_with_email):
+        mock_User_objects_exists_with_email.return_value = True
+        mock_user.email = "john.smith@gmail.com"
+
+        assert "You already own this list." in form.errors["sharee"]

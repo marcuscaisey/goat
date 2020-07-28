@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 
 from users.models import User
 
-from .forms import ItemForm, NewListForm
+from .forms import ItemForm, NewListForm, ShareListForm
 from .models import List
 
 
@@ -17,7 +17,7 @@ def view_list(request, pk):
     else:
         form = ItemForm()
 
-    return render(request, "lists/list.html", {"list": list_, "form": form})
+    return render(request, "lists/list.html", {"list": list_, "form": form, "share_form": ShareListForm()})
 
 
 def home_page(request):
@@ -35,3 +35,12 @@ def new_list(request):
 def my_lists(request, email):
     owner = User.objects.get(email=email)
     return render(request, "lists/my_lists.html", {"owner": owner})
+
+
+def share_list(request, pk):
+    form = ShareListForm(data=request.POST, list_id=pk, sharer=request.user)
+    if form.is_valid():
+        list_ = form.save()
+        return redirect(list_)
+    else:
+        return render(request, "lists/list.html", {"form": ItemForm(), "share_form": form, "list": form.list})

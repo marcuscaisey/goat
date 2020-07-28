@@ -4,8 +4,19 @@ from django.shortcuts import reverse
 from users.models import User
 
 
+class ListManager(models.Manager):
+    def share_list(self, sharee, list_id):
+        user = User.objects.get(email=sharee)
+        list_ = self.get(pk=list_id)
+        list_.shared_with.add(user)
+        return list_
+
+
 class List(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="lists")
+    shared_with = models.ManyToManyField(User, related_name="shared_lists")
+
+    objects = ListManager()
 
     def get_absolute_url(self):
         return reverse("lists:view-list", args=(self.pk,))

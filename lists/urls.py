@@ -7,4 +7,5 @@ urlpatterns = [
     path("new/", views.new_list, name="new-list"),
     path("<int:pk>/", views.view_list, name="view-list"),
     path("users/<str:email>/", views.my_lists, name="my-lists"),
+    path("<int:pk>/share/", views.share_list, name="share-list"),
 ]

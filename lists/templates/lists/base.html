@@ -8,7 +8,7 @@
       <div class="control">
         {{ form.text|add_class:"input" }}
       </div>
-      {% if form.errors %}
+      {% if form.errors.text %}
         <ul id="{{ form.text.id_for_label }}-error" class="help is-danger">{{ form.text.errors }}</ul>
       {% endif %}
     </div>
