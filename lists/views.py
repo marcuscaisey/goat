@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from users.models import User
@@ -37,6 +38,7 @@ def my_lists(request, email):
     return render(request, "lists/my_lists.html", {"owner": owner})
 
 
+@login_required(redirect_field_name=None)
 def share_list(request, pk):
     form = ShareListForm(data=request.POST, list_id=pk, sharer=request.user)
     if form.is_valid():

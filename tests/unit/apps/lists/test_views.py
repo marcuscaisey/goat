@@ -326,8 +326,8 @@ class TestShareList:
         assert list.shared_with.count() == 0
 
     @pytest.mark.django_db
-    def test_list_isnt_shared_if_user_owns_list(self, share_url, client, list):
-        client.force_login(list.owner)
-        client.post(share_url, {"sharee": list.owner.email})
+    def test_redirects_to_login_page_if_user_not_logged_in(self, client, list, share_url, login_url, assert_redirects):
+        response = client.post(share_url, {"sharee": "john.smith@gmail.com"})
 
+        assert_redirects(response, login_url)
         assert list.shared_with.count() == 0
