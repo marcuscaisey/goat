@@ -5,10 +5,10 @@
 #    pip-compile --output-file=main.txt main.in
 #
 asgiref==3.2.10           # via django
-django-environ==0.4.5     # via -r main.in
-django-widget-tweaks==1.4.8  # via -r main.in
-django==3.0.7             # via -r main.in
-gunicorn==20.0.4          # via -r main.in
+django-environ==0.4.5     # via -r requirements/main.in
+django-widget-tweaks==1.4.8  # via -r requirements/main.in
+django==3.0.9             # via -r requirements/main.in
+gunicorn==20.0.4          # via -r requirements/main.in
 pytz==2020.1              # via django
 sqlparse==0.3.1           # via django
 
