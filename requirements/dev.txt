@@ -18,7 +18,7 @@ django-environ==0.4.5     # via -r requirements/main.txt
 django-extensions==3.0.3  # via -r requirements/dev.in
 django-selenium-login==2.0.0  # via -r requirements/dev.in
 django-widget-tweaks==1.4.8  # via -r requirements/main.txt
-django==3.0.7             # via -r requirements/main.txt, django-selenium-login
+django==3.1               # via -r requirements/main.txt, django-selenium-login
 fabric==2.5.0             # via -r requirements/dev.in, patchwork
 factory-boy==2.12.0       # via -r requirements/dev.in, pytest-factoryboy
 faker==4.1.1              # via factory-boy
