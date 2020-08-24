@@ -49,7 +49,7 @@ pytest-factoryboy==2.0.3  # via -r requirements/dev.in
 pytest-html==2.1.1        # via pytest-selenium
 pytest-lazy-fixture==0.6.3  # via -r requirements/dev.in
 pytest-metadata==1.10.0   # via pytest-html
-pytest-mock==3.2.0        # via -r requirements/dev.in
+pytest-mock==3.3.0        # via -r requirements/dev.in
 pytest-picked==0.4.4      # via -r requirements/dev.in
 pytest-selenium==2.0.0    # via -r requirements/dev.in
 pytest-variables==1.9.0   # via pytest-selenium
