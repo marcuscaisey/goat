@@ -53,7 +53,7 @@ pytest-mock==3.2.0        # via -r requirements/dev.in
 pytest-picked==0.4.4      # via -r requirements/dev.in
 pytest-selenium==2.0.0    # via -r requirements/dev.in
 pytest-variables==1.9.0   # via pytest-selenium
-pytest==6.0.1             # via -r requirements/dev.in, pytest-base-url, pytest-django, pytest-factoryboy, pytest-html, pytest-lazy-fixture, pytest-metadata, pytest-mock, pytest-picked, pytest-selenium, pytest-variables
+pytest==6.0.2             # via -r requirements/dev.in, pytest-base-url, pytest-django, pytest-factoryboy, pytest-html, pytest-lazy-fixture, pytest-metadata, pytest-mock, pytest-picked, pytest-selenium, pytest-variables
 python-dateutil==2.8.1    # via faker
 python-dotenv==0.14.0     # via -r requirements/dev.in
 pytz==2020.1              # via -r requirements/main.txt, django
