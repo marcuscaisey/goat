@@ -10,7 +10,7 @@ patchwork==1.0.1
 pip-tools==5.3.1
 ptpython
 pytest==6.0.1
-pytest-django==3.9.0
+pytest-django==3.10.0
 pytest-factoryboy==2.0.3
 pytest-lazy-fixture==0.6.3
 pytest-mock==3.2.0
